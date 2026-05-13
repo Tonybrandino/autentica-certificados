@@ -2,7 +2,7 @@
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Certifica Brasil | Certificado Digital ICP-Brasil",
+  title: "Autêntica Certificados",
   description:
     "Compre e renove certificados digitais e-CPF, e-CNPJ, NF-e, CT-e e certificados em nuvem com validação online ou presencial."
 };
