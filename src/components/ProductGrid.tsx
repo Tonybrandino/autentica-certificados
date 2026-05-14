@@ -1,15 +1,15 @@
-﻿"use client";
+"use client";
 
 import { ProductCard } from "@/components/ProductCard";
-import type { CertificateProduct, CustomerProfile, ValidationMethod } from "@/data/products";
-import { products, validationMethods } from "@/data/products";
+import type { CertificateProduct, CustomerProfile, ValidationMethod, ValidityStep } from "@/data/products";
+import { products, validationMethods, validitySteps } from "@/data/products";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type SelectionState = {
   product: CertificateProduct;
-  validity: string;
+  validity: ValidityStep;
 };
 
 export function ProductGrid() {
@@ -17,11 +17,15 @@ export function ProductGrid() {
   const [selection, setSelection] = useState<SelectionState | null>(null);
   const [validation, setValidation] = useState<ValidationMethod>("video");
   const [isValidationOpen, setIsValidationOpen] = useState(false);
+  const [validityIndex, setValidityIndex] = useState(0);
 
-  const filteredProducts = useMemo(() => products.filter((item) => item.profile === profile), [profile]);
-  const profileLabel = profile === "pf" ? "Pessoa Física" : "Pessoa Jurídica";
+  const filteredProducts = useMemo(
+    () => products.filter((item) => item.profile === profile && !(profile === "pj" && item.id === "nfe")),
+    [profile]
+  );
+  const selectedValidity = validitySteps[validityIndex] ?? 12;
 
-  function handleBuy(product: CertificateProduct, validity: string) {
+  function handleBuy(product: CertificateProduct, validity: ValidityStep) {
     setSelection({ product, validity });
     setValidation("video");
     setIsValidationOpen(true);
@@ -40,8 +44,8 @@ export function ProductGrid() {
             Defina perfil, modelo e validação em poucos cliques
           </h2>
           <p className="mt-4 text-base leading-7 text-muted">
-            Selecione o perfil, escolha o certificado e a validade no card. Depois, no botão Comprar, escolha o método
-            de validação.
+            Selecione o perfil, ajuste a validade no slider e veja os preços atualizados automaticamente em cada
+            certificado.
           </p>
         </div>
 
@@ -66,11 +70,55 @@ export function ProductGrid() {
           </button>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:flex sm:items-center sm:justify-between">
-          <p className="text-sm font-semibold text-slate-700">
-            Exibindo modelos de <span className="font-black text-ink">{profileLabel}</span>
-          </p>
-          <p className="mt-2 text-xs text-slate-600 sm:mt-0">Selecione a validade no card e clique em Comprar</p>
+        <div className="mx-auto mt-6 w-[calc(100%-1rem)] max-w-3xl rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:w-full">
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-sm font-semibold text-slate-700">Validade desejada</p>
+            <p className="text-2xl font-black text-ink">{selectedValidity} meses</p>
+          </div>
+          <div className="mt-4 px-3 sm:px-4">
+            <input
+              type="range"
+              min={0}
+              max={validitySteps.length - 1}
+              step={1}
+              value={validityIndex}
+              onChange={(event) => setValidityIndex(Number(event.target.value))}
+              className="validity-slider w-full cursor-pointer"
+              aria-label="Selecionar validade desejada"
+            />
+            <div className="relative mt-2 h-8 text-sm font-semibold text-slate-500">
+              {validitySteps.map((months, index) => {
+                const lastIndex = validitySteps.length - 1;
+                const position = `${(index / lastIndex) * 100}%`;
+
+                if (index === 0) {
+                  return (
+                    <span key={months} className="absolute left-0 whitespace-nowrap text-left">
+                      {months} m
+                    </span>
+                  );
+                }
+
+                if (index === lastIndex) {
+                  return (
+                    <span key={months} className="absolute right-0 whitespace-nowrap text-right">
+                      {months} m
+                    </span>
+                  );
+                }
+
+                return (
+                  <span
+                    key={months}
+                    className="absolute -translate-x-1/2 whitespace-nowrap text-center"
+                    style={{ left: position }}
+                  >
+                    {months} m
+                  </span>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
         <AnimatePresence mode="wait">
@@ -80,14 +128,18 @@ export function ProductGrid() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.28 }}
-            className={`mt-8 grid gap-5 md:grid-cols-2 ${profile === "pj" ? "xl:grid-cols-4" : "xl:grid-cols-3"}`}
+            className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3"
           >
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} onBuy={handleBuy} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                targetValidity={selectedValidity}
+                onBuy={handleBuy}
+              />
             ))}
           </motion.div>
         </AnimatePresence>
-
       </div>
 
       <AnimatePresence>
@@ -96,7 +148,7 @@ export function ProductGrid() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end bg-slate-900/45 p-3 sm:p-4 sm:items-center sm:justify-center"
+            className="fixed inset-0 z-50 flex items-end bg-slate-900/45 p-3 sm:items-center sm:justify-center sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-labelledby="validation-title"
@@ -105,7 +157,7 @@ export function ProductGrid() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 24 }}
-              className="w-full max-w-xl rounded-3xl border border-slate-200 bg-white p-4 shadow-lift sm:p-6 max-h-[88vh] overflow-y-auto"
+              className="max-h-[88vh] w-full max-w-xl overflow-y-auto rounded-3xl border border-slate-200 bg-white p-4 shadow-lift sm:p-6"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -113,8 +165,8 @@ export function ProductGrid() {
                   <h3 id="validation-title" className="mt-2 text-xl font-black text-ink sm:text-2xl">
                     Escolha o método de validação
                   </h3>
-                  <p className="mt-2 text-sm leading-6 text-muted break-words">
-                    Produto: {selection.product.name} | Validade: {selection.validity}
+                  <p className="mt-2 break-words text-sm leading-6 text-muted">
+                    Produto: {selection.product.name} | Validade: {selection.validity} meses
                   </p>
                 </div>
                 <button
@@ -175,5 +227,3 @@ export function ProductGrid() {
     </section>
   );
 }
-
-

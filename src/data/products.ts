@@ -1,6 +1,9 @@
-﻿export type CustomerProfile = "pf" | "pj";
+export type CustomerProfile = "pf" | "pj";
 
 export type CertificateType = "A1" | "A3" | "Nuvem" | "A1/A3";
+
+export const validitySteps = [12, 24, 36, 48, 60] as const;
+export type ValidityStep = (typeof validitySteps)[number];
 
 export type CertificateProduct = {
   id: string;
@@ -12,8 +15,7 @@ export type CertificateProduct = {
   description: string;
   benefits: string[];
   badge: string;
-  pricePlaceholder: string;
-  validityOptions: string[];
+  pricesByValidity: Partial<Record<ValidityStep, number>>;
 };
 
 export type ValidationMethod = "video" | "presencial" | "renovacao";
@@ -55,8 +57,9 @@ export const products: CertificateProduct[] = [
       "Compatível com e-CAC, gov.br e assinatura digital"
     ],
     badge: "Mais buscado PF",
-    pricePlaceholder: "A partir de R$ 149",
-    validityOptions: ["12 meses"]
+    pricesByValidity: {
+      12: 149
+    }
   },
   {
     id: "ecpf-a3",
@@ -72,8 +75,11 @@ export const products: CertificateProduct[] = [
       "Bom para rotina profissional e assinaturas frequentes"
     ],
     badge: "Segurança reforçada",
-    pricePlaceholder: "A partir de R$ 239",
-    validityOptions: ["12 meses", "24 meses", "36 meses"]
+    pricesByValidity: {
+      12: 239,
+      24: 329,
+      36: 399
+    }
   },
   {
     id: "ecpf-nuvem",
@@ -89,8 +95,12 @@ export const products: CertificateProduct[] = [
       "Mobilidade com segurança jurídica"
     ],
     badge: "Mobilidade total",
-    pricePlaceholder: "A partir de R$ 269",
-    validityOptions: ["12 meses", "24 meses", "36 meses", "60 meses"]
+    pricesByValidity: {
+      12: 269,
+      24: 359,
+      36: 439,
+      60: 629
+    }
   },
   {
     id: "ecnpj-a1",
@@ -106,8 +116,9 @@ export const products: CertificateProduct[] = [
       "Boa opção para uso contínuo em equipe"
     ],
     badge: "Mais vendido PJ",
-    pricePlaceholder: "A partir de R$ 199",
-    validityOptions: ["12 meses"]
+    pricesByValidity: {
+      12: 199
+    }
   },
   {
     id: "ecnpj-a3",
@@ -123,8 +134,11 @@ export const products: CertificateProduct[] = [
       "Indicado para processos com controle de responsável"
     ],
     badge: "Governança de uso",
-    pricePlaceholder: "A partir de R$ 259",
-    validityOptions: ["12 meses", "24 meses", "36 meses"]
+    pricesByValidity: {
+      12: 259,
+      24: 349,
+      36: 429
+    }
   },
   {
     id: "ecnpj-nuvem",
@@ -140,8 +154,12 @@ export const products: CertificateProduct[] = [
       "Segurança com autenticação de acesso"
     ],
     badge: "Empresa remota",
-    pricePlaceholder: "A partir de R$ 289",
-    validityOptions: ["12 meses", "24 meses", "36 meses", "60 meses"]
+    pricesByValidity: {
+      12: 289,
+      24: 389,
+      36: 479,
+      60: 679
+    }
   },
   {
     id: "nfe",
@@ -154,11 +172,13 @@ export const products: CertificateProduct[] = [
     benefits: [
       "Escolha entre modelo A1 ou A3 conforme operação",
       "Compatível com emissores e ERPs fiscais",
-      "Atende rotina de emissão recorrente com segurança"
+      "Atende rotina de emissão recorrente com validades de 12, 24 e 36 meses"
     ],
     badge: "Foco fiscal",
-    pricePlaceholder: "A partir de R$ 219",
-    validityOptions: ["12 meses", "24 meses", "36 meses"]
+    pricesByValidity: {
+      12: 219,
+      24: 309,
+      36: 389
+    }
   }
 ];
-

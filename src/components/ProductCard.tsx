@@ -1,17 +1,40 @@
-﻿"use client";
+"use client";
 
-import type { CertificateProduct } from "@/data/products";
+import type { CertificateProduct, ValidityStep } from "@/data/products";
 import { motion } from "framer-motion";
 import { ArrowRight, Check, FileBadge2 } from "lucide-react";
-import { useState } from "react";
 
 type ProductCardProps = {
   product: CertificateProduct;
-  onBuy: (product: CertificateProduct, validity: string) => void;
+  targetValidity: ValidityStep;
+  onBuy: (product: CertificateProduct, validity: ValidityStep) => void;
 };
 
-export function ProductCard({ product, onBuy }: ProductCardProps) {
-  const [validity, setValidity] = useState(product.validityOptions[0] ?? "12 meses");
+function getAppliedValidity(product: CertificateProduct, targetValidity: ValidityStep): ValidityStep {
+  const available = Object.keys(product.pricesByValidity)
+    .map(Number)
+    .sort((a, b) => a - b) as ValidityStep[];
+
+  if (available.length === 0) {
+    return 12;
+  }
+
+  const closestBelowTarget = [...available].reverse().find((months) => months <= targetValidity);
+  return closestBelowTarget ?? available[0];
+}
+
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(
+    value
+  );
+}
+
+export function ProductCard({ product, targetValidity, onBuy }: ProductCardProps) {
+  const availableValidities = Object.keys(product.pricesByValidity)
+    .map(Number)
+    .sort((a, b) => a - b) as ValidityStep[];
+  const appliedValidity = getAppliedValidity(product, targetValidity);
+  const appliedPrice = product.pricesByValidity[appliedValidity] ?? 0;
 
   return (
     <motion.article
@@ -37,23 +60,16 @@ export function ProductCard({ product, onBuy }: ProductCardProps) {
 
       <p className="mt-5 text-sm leading-6 text-muted">{product.description}</p>
 
-      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-        <label htmlFor={`validity-${product.id}`} className="text-[11px] font-black uppercase tracking-wide text-muted">
-          Escolha a validade
-        </label>
-        <select
-          id={`validity-${product.id}`}
-          aria-label={`Selecionar validade do ${product.name}`}
-          value={validity}
-          onChange={(event) => setValidity(event.target.value)}
-          className="focus-ring mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-ink"
-        >
-          {product.validityOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+      <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <p className="text-xs font-bold uppercase tracking-wide text-muted">A partir de</p>
+        <p className="mt-2 flex items-end gap-2">
+          <span className="text-4xl font-black leading-none text-ink">{formatCurrency(appliedPrice)}</span>
+          <span className="pb-1 text-lg font-bold text-slate-500">/ {appliedValidity} m</span>
+        </p>
+        <p className="mt-2 text-sm font-semibold text-slate-600">Validade aplicada: {appliedValidity} meses</p>
+        <p className="mt-1 text-xs font-semibold text-slate-500">
+          Disponível em: {availableValidities.join(", ")} meses
+        </p>
       </div>
 
       <ul className="mt-4 space-y-2">
@@ -66,11 +82,10 @@ export function ProductCard({ product, onBuy }: ProductCardProps) {
       </ul>
 
       <div className="mt-auto pt-6">
-        <p className="mb-4 text-lg font-black text-ink">{product.pricePlaceholder}</p>
         <div className="grid gap-2 sm:grid-cols-2">
           <motion.button
             type="button"
-            onClick={() => onBuy(product, validity)}
+            onClick={() => onBuy(product, appliedValidity)}
             whileHover={{ y: -1, scale: 1.01 }}
             whileTap={{ scale: 0.985 }}
             className="focus-ring inline-flex items-center justify-center gap-2 rounded-full bg-ocean px-4 py-3 text-sm font-extrabold text-white transition hover:bg-[#006B9A]"
@@ -91,5 +106,3 @@ export function ProductCard({ product, onBuy }: ProductCardProps) {
     </motion.article>
   );
 }
-
-
