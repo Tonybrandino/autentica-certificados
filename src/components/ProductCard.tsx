@@ -35,17 +35,6 @@ export function ProductCard({ product, onBuy }: ProductCardProps) {
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <p className="text-[11px] font-black uppercase tracking-wide text-muted">Tipo</p>
-          <p className="mt-1 text-sm font-black text-ink">{product.type}</p>
-        </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <p className="text-[11px] font-black uppercase tracking-wide text-muted">Armazenamento</p>
-          <p className="mt-1 text-sm font-black text-ink">{product.storage}</p>
-        </div>
-      </div>
-
       <p className="mt-5 text-sm leading-6 text-muted">{product.description}</p>
 
       <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
