@@ -58,7 +58,7 @@ export function ValidationMethods() {
             Qual forma de validação combina com você?
           </h2>
           <p className="mt-4 text-base leading-7 text-muted">
-            Clique em cada opção para ver quando usar e o que considerar antes de iniciar sua compra.
+            Passe o mouse em cada opção para ver quando usar e o que considerar antes de iniciar sua compra.
           </p>
         </div>
 
@@ -73,6 +73,8 @@ export function ValidationMethods() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.25 }}
                 transition={{ delay: index * 0.08, duration: 0.5 }}
+                onMouseEnter={() => setActiveId(id)}
+                onMouseLeave={() => setActiveId((prev) => (prev === id ? null : prev))}
                 className={`overflow-hidden rounded-2xl border bg-white shadow-sm transition ${
                   isOpen ? "border-ocean/45 shadow-soft" : "border-slate-200"
                 }`}
@@ -81,7 +83,8 @@ export function ValidationMethods() {
                   type="button"
                   aria-expanded={isOpen}
                   aria-controls={`validacao-panel-${id}`}
-                  onClick={() => setActiveId((prev) => (prev === id ? null : id))}
+                  onFocus={() => setActiveId(id)}
+                  onClick={() => setActiveId(id)}
                   className="focus-ring w-full p-5 text-left sm:p-6"
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -101,7 +104,7 @@ export function ValidationMethods() {
                     />
                   </div>
 
-                  <p className="mt-4 text-xs font-semibold text-slate-500">Clique para ver detalhes</p>
+                  <p className="mt-4 text-xs font-semibold text-slate-500">Passe o mouse para ver detalhes</p>
                 </button>
 
                 <AnimatePresence initial={false}>
