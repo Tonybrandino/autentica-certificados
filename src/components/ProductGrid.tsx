@@ -80,7 +80,7 @@ export function ProductGrid() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.28 }}
-            className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+            className={`mt-8 grid gap-5 md:grid-cols-2 ${profile === "pj" ? "xl:grid-cols-4" : "xl:grid-cols-3"}`}
           >
             {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} onBuy={handleBuy} />
