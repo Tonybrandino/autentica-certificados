@@ -1,7 +1,7 @@
 "use client";
 
-import type { CertificateProduct, ValidityStep } from "@/data/products";
-import { products } from "@/data/products";
+import type { CertificateProduct, ValidationMethod, ValidityStep } from "@/data/products";
+import { products, validationMethods } from "@/data/products";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -13,15 +13,17 @@ import {
   FileArchive,
   HardDrive,
   KeyRound,
+  MapPin,
   ReceiptText,
+  RefreshCw,
   ShieldCheck,
-  Smartphone,
-  UserRound
+  UserRound,
+  Video
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type CertificateChoice = "pf" | "pj" | "nfe";
-type DeviceChoice = "arquivo" | "cartao" | "cartao-leitora" | "token" | "birdid";
+type DeviceChoice = "arquivo" | "smartcard" | "smartcard-leitora" | "token";
 
 type CertificateOption = {
   id: CertificateChoice;
@@ -34,7 +36,7 @@ type DeviceOption = {
   id: DeviceChoice;
   label: string;
   helper: string;
-  productType: "A1" | "A3" | "Nuvem";
+  productType: "A1" | "A3";
   surcharge: number;
   icon: typeof FileArchive;
 };
@@ -48,12 +50,12 @@ type SelectOption = {
   onClick: () => void;
 };
 
-type StepKey = "certificate" | "device" | "validity";
+type StepKey = "validation" | "certificate" | "device" | "validity";
 
 const certificateOptions: CertificateOption[] = [
-  { id: "pf", label: "Pessoa Física", helper: "e-CPF", icon: UserRound },
-  { id: "pj", label: "Pessoa Jurídica", helper: "e-CNPJ", icon: Building2 },
-  { id: "nfe", label: "NF-e", helper: "Nota fiscal eletrônica", icon: ReceiptText }
+  { id: "pf", label: "Pessoa Fisica", helper: "e-CPF", icon: UserRound },
+  { id: "pj", label: "Pessoa Juridica", helper: "e-CNPJ", icon: Building2 },
+  { id: "nfe", label: "NF-e", helper: "Nota fiscal eletronica", icon: ReceiptText }
 ];
 
 const deviceOptions: DeviceOption[] = [
@@ -66,16 +68,16 @@ const deviceOptions: DeviceOption[] = [
     icon: FileArchive
   },
   {
-    id: "cartao",
-    label: "Cartão",
-    helper: "A3 em cartão",
+    id: "smartcard",
+    label: "SmartCard",
+    helper: "A3 em cartao",
     productType: "A3",
     surcharge: 70,
     icon: CreditCard
   },
   {
-    id: "cartao-leitora",
-    label: "Cartão + Leitora",
+    id: "smartcard-leitora",
+    label: "SmartCard + Leitora",
     helper: "A3 com leitora inclusa",
     productType: "A3",
     surcharge: 120,
@@ -84,20 +86,22 @@ const deviceOptions: DeviceOption[] = [
   {
     id: "token",
     label: "Token",
-    helper: "A3 em mídia USB",
+    helper: "A3 em midia USB",
     productType: "A3",
     surcharge: 90,
     icon: KeyRound
-  },
-  {
-    id: "birdid",
-    label: "Bird ID (Nuvem)",
-    helper: "Certificado em nuvem via app",
-    productType: "Nuvem",
-    surcharge: 0,
-    icon: Smartphone
   }
 ];
+
+const validationIconById: Record<ValidationMethod, typeof Video> = {
+  video: Video,
+  renovacao: RefreshCw,
+  presencial: MapPin
+};
+
+const orderedValidationMethods = ["video", "renovacao", "presencial"]
+  .map((id) => validationMethods.find((method) => method.id === id))
+  .filter(Boolean) as typeof validationMethods;
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -125,19 +129,16 @@ function getProduct(certificate: CertificateChoice, device: DeviceChoice) {
 }
 
 export function ProductGrid() {
+  const [validation, setValidation] = useState<ValidationMethod>("video");
   const [certificate, setCertificate] = useState<CertificateChoice>("pf");
   const [device, setDevice] = useState<DeviceChoice>("arquivo");
   const [validity, setValidity] = useState<ValidityStep>(12);
-  const [activeStep, setActiveStep] = useState<StepKey>("certificate");
+  const [activeStep, setActiveStep] = useState<StepKey>("validation");
 
-  const steps: StepKey[] = ["certificate", "device", "validity"];
-
-  const visibleDeviceOptions = useMemo(
-    () => deviceOptions.filter((opt) => opt.id !== "birdid" || certificate === "pf"),
-    [certificate]
-  );
+  const steps: StepKey[] = ["validation", "certificate", "device", "validity"];
 
   const selectedDevice = deviceOptions.find((option) => option.id === device) ?? deviceOptions[0];
+  const selectedValidation = orderedValidationMethods.find((item) => item.id === validation) ?? orderedValidationMethods[0];
   const selectedCertificate = certificateOptions.find((option) => option.id === certificate) ?? certificateOptions[0];
   const selectedProduct = useMemo(() => getProduct(certificate, device), [certificate, device]);
   const availableValidities = useMemo(
@@ -171,12 +172,14 @@ export function ProductGrid() {
     }
   }
 
-  function onCertificateSelect(cert: CertificateChoice) {
-    setCertificate(cert);
-    if (cert !== "pf" && device === "birdid") {
-      setDevice("arquivo");
-    }
-  }
+  const validationSelectOptions: SelectOption[] = orderedValidationMethods.map((option) => ({
+    id: option.id,
+    label: option.title,
+    helper: option.subtitle,
+    icon: validationIconById[option.id],
+    selected: validation === option.id,
+    onClick: () => applyWithAdvance("validation", () => setValidation(option.id))
+  }));
 
   const certificateSelectOptions: SelectOption[] = certificateOptions.map((option) => ({
     id: option.id,
@@ -184,10 +187,10 @@ export function ProductGrid() {
     helper: option.helper,
     icon: option.icon,
     selected: certificate === option.id,
-    onClick: () => applyWithAdvance("certificate", () => onCertificateSelect(option.id))
+    onClick: () => applyWithAdvance("certificate", () => setCertificate(option.id))
   }));
 
-  const deviceSelectOptions: SelectOption[] = visibleDeviceOptions.map((option) => ({
+  const deviceSelectOptions: SelectOption[] = deviceOptions.map((option) => ({
     id: option.id,
     label: option.label,
     helper: option.surcharge > 0 ? `${option.helper} | +${formatCurrency(option.surcharge)}` : option.helper,
@@ -214,31 +217,38 @@ export function ProductGrid() {
       options: SelectOption[];
     }
   > = {
-    certificate: {
+    validation: {
       step: "Passo 1",
+      title: "Metodo de validacao",
+      description: "Escolha como a identidade sera confirmada.",
+      options: validationSelectOptions
+    },
+    certificate: {
+      step: "Passo 2",
       title: "Tipo de certificado",
       description: "Defina o uso principal do certificado digital.",
       options: certificateSelectOptions
     },
     device: {
-      step: "Passo 2",
-      title: "Formato",
-      description: "Selecione como o certificado será armazenado.",
+      step: "Passo 3",
+      title: "Dispositivo",
+      description: "Selecione a forma de uso e armazenamento.",
       options: deviceSelectOptions
     },
     validity: {
-      step: "Passo 3",
+      step: "Passo 4",
       title: "Validade",
-      description: "Escolha o período ideal para sua rotina.",
+      description: "Escolha o periodo ideal para sua rotina.",
       options: validitySelectOptions
     }
   };
 
   const currentView = stepViews[activeStep];
   const timelineItems = [
-    { key: "certificate", stepLabel: "Passo 1", title: "Certificado", value: selectedCertificate.label },
-    { key: "device", stepLabel: "Passo 2", title: "Formato", value: selectedDevice.label },
-    { key: "validity", stepLabel: "Passo 3", title: "Validade", value: activeValidity ? `${activeValidity} meses` : "-" }
+    { key: "validation", stepLabel: "Passo 1", title: "Validacao", value: selectedValidation?.title ?? "-" },
+    { key: "certificate", stepLabel: "Passo 2", title: "Certificado", value: selectedCertificate.label },
+    { key: "device", stepLabel: "Passo 3", title: "Dispositivo", value: selectedDevice.label },
+    { key: "validity", stepLabel: "Passo 4", title: "Validade", value: activeValidity ? `${activeValidity} meses` : "-" }
   ] as const;
 
   return (
@@ -250,7 +260,7 @@ export function ProductGrid() {
             Configure seu certificado sem perder tempo
           </h2>
           <p className="mt-3 text-sm font-semibold leading-6 text-slate-600 sm:text-base">
-            Fluxo compacto: uma etapa por vez, total sempre visível.
+            Fluxo compacto: uma etapa por vez, total sempre visivel.
           </p>
         </div>
 
@@ -305,6 +315,7 @@ export function ProductGrid() {
                 title={currentView.title}
                 description={currentView.description}
                 options={currentView.options}
+                columns={activeStep === "validity" ? Math.min(currentView.options.length, 3) : 2}
               />
             </div>
 
@@ -324,7 +335,7 @@ export function ProductGrid() {
                 disabled={!canGoNext}
                 className="focus-ring inline-flex min-h-10 items-center gap-2 rounded-lg bg-ocean px-4 text-sm font-extrabold text-white transition enabled:hover:bg-[#006B9A] disabled:cursor-not-allowed disabled:opacity-40"
               >
-                Próximo
+                Proximo
                 <ArrowRight size={15} aria-hidden="true" />
               </button>
             </div>
@@ -340,8 +351,9 @@ export function ProductGrid() {
             </div>
 
             <p className="mt-4 text-xs font-extrabold uppercase tracking-[0.16em] text-slate-400">Em 12 vezes</p>
-            <p className="mt-1 text-4xl font-black leading-none text-ink sm:text-[2.7rem]">
-              12x {formatCurrency(monthlyInstallment)}
+            <p className="mt-1 font-black leading-none text-ink">
+              <span className="text-xl sm:text-2xl">12x </span>
+              <span className="text-4xl sm:text-[2.7rem]">{formatCurrency(monthlyInstallment)}</span>
             </p>
             <p className="mt-2 text-xs font-bold text-slate-500 sm:text-sm">
               Total: {formatCurrency(total)}
@@ -351,32 +363,14 @@ export function ProductGrid() {
             </p>
 
             <div className="mt-4 space-y-1.5 rounded-xl border border-slate-100 bg-slate-50/80 p-3">
+              <SummaryLine label="Validacao" value={selectedValidation?.title ?? "-"} />
               <SummaryLine label="Certificado" value={selectedCertificate.label} />
-              <SummaryLine label="Formato" value={selectedDevice.label} />
+              <SummaryLine label="Dispositivo" value={selectedDevice.label} />
               <SummaryLine label="Validade" value={activeValidity ? `${activeValidity} meses` : "-"} />
             </div>
 
-            {/* Oferta combo: e-CNPJ A1 + Bird ID */}
-            <div className="mt-3 rounded-xl border border-emerald-100 bg-emerald-50/50 p-3">
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-emerald-700">Oferta combo</p>
-              <p className="mt-1 text-sm font-black text-ink">e-CNPJ A1 + Bird ID</p>
-              <p className="mt-0.5 text-xs font-bold text-slate-600">12x R$&nbsp;14,50 · Total: R$&nbsp;174,00</p>
-              <p className="mt-0.5 text-[11px] text-slate-500">Bird ID Trial incluso gratuitamente</p>
-            </div>
-
-            {/* Formas de pagamento */}
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-bold text-slate-600">
-                <CreditCard size={10} aria-hidden="true" />
-                Cartão de crédito
-              </span>
-              <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-bold text-slate-600">
-                Pix recorrente
-              </span>
-            </div>
-
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              {[1, 2, 3].map((step) => (
+            <div className="mt-4 grid grid-cols-4 gap-2">
+              {[1, 2, 3, 4].map((step) => (
                 <span
                   key={step}
                   className={`h-1.5 rounded-full ${step <= stepIndex + 1 ? "bg-ocean" : "bg-slate-200"}`}
@@ -406,9 +400,13 @@ type StepPanelProps = {
   title: string;
   description: string;
   options: SelectOption[];
+  columns?: number;
 };
 
-function StepPanel({ step, title, description, options }: StepPanelProps) {
+function StepPanel({ step, title, description, options, columns = 2 }: StepPanelProps) {
+  const gridClass =
+    columns === 3 ? "grid-cols-3" : columns === 1 ? "grid-cols-1" : "grid-cols-2";
+
   return (
     <article className="rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-5 lg:min-h-[286px]">
       <div className="mb-3 flex items-start justify-between gap-4">
@@ -419,7 +417,7 @@ function StepPanel({ step, title, description, options }: StepPanelProps) {
         </div>
       </div>
 
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className={`grid gap-2 ${gridClass}`}>
         {options.map((option) => (
           <OptionButton
             key={option.id}
