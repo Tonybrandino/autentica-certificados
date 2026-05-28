@@ -5,11 +5,12 @@ import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const navLinks = [
-  { label: "Certificados", href: "#certificados" },
-  { label: "Como funciona", href: "#como-funciona" },
-  { label: "Validação", href: "#validacao" },
-  { label: "Benefícios", href: "#beneficios" },
-  { label: "Dúvidas", href: "#duvidas" }
+  { label: "Sobre", href: "#sobre" },
+  { label: "Certificado Digital", href: "#certificados" },
+  { label: "Saude do Seu Negocio", href: "#saude" },
+  { label: "Suporte", href: "#suporte" },
+  { label: "Duvidas", href: "#duvidas" },
+  { label: "Fale Conosco", href: "#fale-conosco" }
 ];
 
 export function Header() {
@@ -50,16 +51,10 @@ export function Header() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <a
-            href="#certificados"
-            className="focus-ring rounded-full border border-sky-100 bg-white px-5 py-2.5 text-sm font-extrabold text-ink smooth-ease hover:-translate-y-0.5 hover:border-ocean/35 hover:text-ocean"
-          >
-            Renovar
-          </a>
-          <a
-            href="#comprar"
+            href="#"
             className="focus-ring rounded-full bg-ocean px-5 py-2.5 text-sm font-extrabold text-white shadow-soft smooth-ease hover:-translate-y-0.5 hover:bg-[#006B9A]"
           >
-            Comprar
+            LOGIN
           </a>
         </div>
 
@@ -95,18 +90,11 @@ export function Header() {
               ))}
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 <a
-                  href="#certificados"
-                  onClick={() => setIsOpen(false)}
-                  className="focus-ring rounded-full border border-slate-200 px-4 py-3 text-center text-sm font-extrabold text-ink"
-                >
-                  Renovar
-                </a>
-                <a
-                  href="#comprar"
+                  href="#"
                   onClick={() => setIsOpen(false)}
                   className="focus-ring rounded-full bg-ocean px-4 py-3 text-center text-sm font-extrabold text-white"
                 >
-                  Comprar
+                  LOGIN
                 </a>
               </div>
             </nav>

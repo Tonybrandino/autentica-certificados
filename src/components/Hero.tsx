@@ -160,7 +160,6 @@ export function Hero() {
 
   return (
     <section className="relative pt-24 sm:pt-28 lg:pt-32">
-      <div className="subtle-grid absolute inset-0 -z-10" aria-hidden="true" />
       <div className="section-shell pb-0">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(390px,500px)] lg:gap-14">
           <motion.div
@@ -228,7 +227,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mx-auto mt-20 grid max-w-5xl grid-cols-1 gap-3 sm:mt-24 sm:grid-cols-2 lg:grid-cols-4"
+          className="mx-auto mt-20 grid max-w-5xl grid-cols-1 gap-3 pb-8 sm:mt-24 sm:grid-cols-2 sm:pb-10 lg:grid-cols-4"
         >
           {trustBadges.map(({ label, icon: Icon }, index) => (
             <motion.div
