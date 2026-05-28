@@ -7,9 +7,9 @@ import { useEffect, useState } from "react";
 const navLinks = [
   { label: "Sobre", href: "#sobre" },
   { label: "Certificado Digital", href: "#certificados" },
-  { label: "Saude do Seu Negocio", href: "#saude" },
+  { label: "Saúde do Seu Negócio", href: "#saude" },
   { label: "Suporte", href: "#suporte" },
-  { label: "Duvidas", href: "#duvidas" },
+  { label: "Dúvidas", href: "#duvidas" },
   { label: "Fale Conosco", href: "#fale-conosco" }
 ];
 

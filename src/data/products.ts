@@ -77,8 +77,7 @@ export const products: CertificateProduct[] = [
     badge: "Segurança reforçada",
     pricesByValidity: {
       12: 239,
-      24: 329,
-      36: 399
+      24: 329
     }
   },
   {
@@ -96,9 +95,6 @@ export const products: CertificateProduct[] = [
     ],
     badge: "Mobilidade total",
     pricesByValidity: {
-      12: 269,
-      24: 359,
-      36: 439,
       60: 629
     }
   },
@@ -136,8 +132,7 @@ export const products: CertificateProduct[] = [
     badge: "Governança de uso",
     pricesByValidity: {
       12: 259,
-      24: 349,
-      36: 429
+      24: 349
     }
   },
   {
@@ -177,8 +172,7 @@ export const products: CertificateProduct[] = [
     badge: "Foco fiscal",
     pricesByValidity: {
       12: 219,
-      24: 309,
-      36: 389
+      24: 309
     }
   }
 ];

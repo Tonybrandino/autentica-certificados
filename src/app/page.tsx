@@ -1,4 +1,5 @@
 import { Benefits } from "@/components/Benefits";
+import { Contato } from "@/components/Contato";
 import { FAQ } from "@/components/FAQ";
 import { FinalCTA } from "@/components/FinalCTA";
 import { Footer } from "@/components/Footer";
@@ -6,7 +7,9 @@ import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
 import { ProductGrid } from "@/components/ProductGrid";
+import { SaudeNegocio } from "@/components/SaudeNegocio";
 import { SocialProof } from "@/components/SocialProof";
+import { Suporte } from "@/components/Suporte";
 import { ValidationMethods } from "@/components/ValidationMethods";
 
 export default function Home() {
@@ -29,7 +32,10 @@ export default function Home() {
       <HowItWorks />
       <SocialProof />
       <Benefits />
+      <SaudeNegocio />
+      <Suporte />
       <FAQ />
+      <Contato />
       <FinalCTA />
       <Footer />
     </main>
