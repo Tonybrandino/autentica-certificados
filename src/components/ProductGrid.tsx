@@ -150,6 +150,7 @@ export function ProductGrid() {
   const deviceSurcharge = selectedDevice.productType === "A3" ? selectedDevice.surcharge : 0;
   const total = basePrice + deviceSurcharge;
   const monthlyInstallment = total / 12;
+  const totalAVista = Math.round(total * 0.95 * 100) / 100;
 
   const stepIndex = steps.indexOf(activeStep);
   const canGoBack = stepIndex > 0;
@@ -260,7 +261,7 @@ export function ProductGrid() {
             Configure seu certificado sem perder tempo
           </h2>
           <p className="mt-3 text-sm font-semibold leading-6 text-slate-600 sm:text-base">
-            Fluxo compacto: uma etapa por vez, total sempre visivel.
+            Encontre o modelo mais adequado para sua necessidade em poucos passos.
           </p>
         </div>
 
@@ -356,11 +357,22 @@ export function ProductGrid() {
               <span className="text-4xl sm:text-[2.7rem]">{formatCurrency(monthlyInstallment)}</span>
             </p>
             <p className="mt-2 text-xs font-bold text-slate-500 sm:text-sm">
-              Total: {formatCurrency(total)}
+              Total parcelado: {formatCurrency(total)}
             </p>
             <p className="mt-1 text-xs font-bold text-slate-500">
               {selectedProduct?.name ?? "Produto"} | {activeValidity ?? 12} meses
             </p>
+
+            <div className="mt-3 rounded-xl border border-trust/25 bg-trust/8 px-3 py-2.5" style={{ backgroundColor: "rgba(20,184,122,0.07)" }}>
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-trust">À vista com Pix</p>
+              <p className="mt-0.5 text-2xl font-black text-trust">{formatCurrency(totalAVista)}</p>
+              <p className="mt-0.5 text-[11px] font-semibold text-slate-500">5% de desconto no pagamento à vista</p>
+            </div>
+
+            <div className="mt-3 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5">
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">Formas de pagamento</p>
+              <p className="mt-1 text-xs font-semibold text-slate-700">Cartão de Crédito ou Pix Recorrente/Programado</p>
+            </div>
 
             <div className="mt-4 space-y-1.5 rounded-xl border border-slate-100 bg-slate-50/80 p-3">
               <SummaryLine label="Validacao" value={selectedValidation?.title ?? "-"} />

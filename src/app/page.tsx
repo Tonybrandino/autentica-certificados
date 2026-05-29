@@ -1,22 +1,18 @@
-import { Benefits } from "@/components/Benefits";
 import { Contato } from "@/components/Contato";
 import { FAQ } from "@/components/FAQ";
-import { FinalCTA } from "@/components/FinalCTA";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
-import { HowItWorks } from "@/components/HowItWorks";
 import { ProductGrid } from "@/components/ProductGrid";
 import { SaudeNegocio } from "@/components/SaudeNegocio";
 import { SocialProof } from "@/components/SocialProof";
 import { Suporte } from "@/components/Suporte";
-import { ValidationMethods } from "@/components/ValidationMethods";
 
 export default function Home() {
   return (
     <main className="overflow-hidden">
       <Header />
-      <div className="relative mb-10 overflow-hidden sm:mb-14 lg:mb-16">
+      <div id="sobre" className="relative mb-10 overflow-hidden sm:mb-14 lg:mb-16">
         <div
           className="absolute inset-0 -z-10 bg-gradient-to-br from-[#f8fbff] via-white to-[#eef6ff]"
           aria-hidden="true"
@@ -28,15 +24,11 @@ export default function Home() {
         <Hero />
         <ProductGrid />
       </div>
-      <ValidationMethods />
-      <HowItWorks />
-      <SocialProof />
-      <Benefits />
       <SaudeNegocio />
-      <Suporte />
       <FAQ />
+      <Suporte />
+      <SocialProof />
       <Contato />
-      <FinalCTA />
       <Footer />
     </main>
   );

@@ -1,53 +1,73 @@
-import { Mail, MessageCircle } from "lucide-react";
-
-const footerLinks = ["Certificados", "Validação", "Renovação", "Suporte", "Política de Privacidade", "Termos de Uso"];
+const footerColumns = [
+  {
+    heading: "Soluções",
+    links: [
+      { label: "Certificado Digital", href: "#certificados" },
+      { label: "Cashback OKAY", href: "#saude" },
+      { label: "Suporte", href: "#suporte" },
+      { label: "Instalar Certificado", href: "#suporte" }
+    ]
+  },
+  {
+    heading: "Atendimento",
+    links: [
+      { label: "Fale Conosco", href: "#fale-conosco" },
+      { label: "WhatsApp", href: "https://wa.me/5500000000000" }, // Substituir pelos dados oficiais da OKAY
+      { label: "Dúvidas", href: "#duvidas" },
+      { label: "Suporte", href: "#suporte" }
+    ]
+  },
+  {
+    heading: "Legal",
+    links: [
+      { label: "Termos de uso", href: "#" },
+      { label: "Política de privacidade", href: "#" }
+    ]
+  }
+];
 
 export function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-white">
-      <div className="section-shell py-12">
-        <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
+      <div className="section-shell py-14">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_0.8fr]">
+          {/* Coluna 1 — Identidade */}
           <div>
             <a href="#" className="focus-ring inline-flex items-center rounded-lg" aria-label="Ir para o início">
-              <img src="/acd.svg" alt="Autêntica Certificados" className="h-10 w-auto sm:h-11" />
+              <img src="/acd.svg" alt="OKAY" className="h-10 w-auto sm:h-11" />
             </a>
-            <p className="mt-5 max-w-md text-sm leading-7 text-muted">
-              Home demonstrativa para venda de certificados digitais, pronta para evoluir com carrinho, checkout,
-              área do cliente e integrações comerciais.
+            <p className="mt-5 max-w-xs text-sm leading-7 text-muted">
+              Soluções digitais para emissão, renovação, suporte e gestão de certificados digitais,
+              com atendimento especializado e foco em segurança.
             </p>
           </div>
 
-          <div>
-            <h3 className="text-sm font-black uppercase tracking-[0.18em] text-ink">Links</h3>
-            <nav className="mt-5 grid gap-3" aria-label="Links do rodapé">
-              {footerLinks.map((link) => (
-                <a key={link} href="#certificados" className="focus-ring rounded-lg text-sm font-semibold text-muted hover:text-ocean">
-                  {link}
-                </a>
-              ))}
-            </nav>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-black uppercase tracking-[0.18em] text-ink">Contato</h3>
-            <div className="mt-5 grid gap-3 text-sm font-semibold text-muted">
-              <a href="https://wa.me/5500000000000" className="focus-ring flex items-center gap-2 rounded-lg hover:text-ocean">
-                <MessageCircle size={17} aria-hidden="true" />
-                WhatsApp
-              </a>
-              <a href="mailto:atendimento@certificabrasil.com.br" className="focus-ring flex items-center gap-2 rounded-lg hover:text-ocean break-all">
-                <Mail size={17} aria-hidden="true" />
-                atendimento@certificabrasil.com.br
-              </a>
-              <p>Atendimento: segunda a sexta, 8h às 18h</p>
+          {/* Colunas 2–4 */}
+          {footerColumns.map(({ heading, links }) => (
+            <div key={heading}>
+              <h3 className="text-sm font-black uppercase tracking-[0.18em] text-ink">{heading}</h3>
+              <nav className="mt-5 grid gap-3" aria-label={`Links de ${heading}`}>
+                {links.map(({ label, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target={href.startsWith("http") ? "_blank" : undefined}
+                    rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    className="focus-ring rounded-lg text-sm font-semibold text-muted smooth-ease hover:text-ocean"
+                  >
+                    {label}
+                  </a>
+                ))}
+              </nav>
             </div>
-          </div>
+          ))}
         </div>
 
-        <div className="mt-10 border-t border-slate-200 pt-6">
-          <p className="text-xs leading-6 text-muted">
-            A emissão do certificado está sujeita à validação de identidade e às regras da Autoridade Certificadora
-            responsável.
+        <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-slate-200 pt-6 sm:flex-row sm:items-center">
+          <p className="text-xs text-muted">© 2026 OKAY. Todos os direitos reservados.</p>
+          <p className="text-xs text-muted">
+            A emissão do certificado está sujeita à validação de identidade e às regras da
+            Autoridade Certificadora responsável.
           </p>
         </div>
       </div>

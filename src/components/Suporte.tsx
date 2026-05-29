@@ -15,44 +15,51 @@ import {
 const supportItems = [
   {
     icon: FileArchive,
-    title: "Instalar Certificado A1",
-    description: "Passo a passo para instalar o certificado A1 (arquivo) no Windows, Mac ou no navegador.",
+    title: "Instalar certificado A1",
+    description:
+      "Veja as orientações para baixar, instalar e proteger seu certificado digital em arquivo.",
     cta: "Ver instruções"
   },
   {
     icon: CreditCard,
-    title: "Instalar Certificado em Cartão",
-    description: "Como instalar o driver do cartão e configurar o leitor para uso do certificado A3.",
+    title: "Instalar certificado em cartão",
+    description:
+      "Confira os passos para configurar seu cartão e preparar o ambiente para uso.",
     cta: "Ver instruções"
   },
   {
     icon: KeyRound,
-    title: "Instalar Certificado em Token",
-    description: "Instalação do driver do token USB e configuração para uso em diferentes sistemas.",
+    title: "Instalar certificado em token",
+    description:
+      "Confira os passos para configurar seu dispositivo e preparar o ambiente para uso.",
     cta: "Ver instruções"
   },
   {
     icon: Cloud,
     title: "Instalar Bird ID / Nuvem",
-    description: "Como ativar e configurar o certificado em nuvem pelo aplicativo Bird ID.",
+    description:
+      "Entenda como acessar e utilizar seu certificado em nuvem com segurança.",
     cta: "Ver instruções"
   },
   {
     icon: RefreshCw,
-    title: "Renovação de Certificado",
-    description: "Entenda quando e como renovar seu certificado antes do vencimento, sem perder acesso.",
+    title: "Renovação de certificado",
+    description:
+      "Veja como renovar seu certificado e evitar interrupções no uso.",
     cta: "Como renovar"
   },
   {
     icon: HelpCircle,
-    title: "Problemas de Acesso",
-    description: "Soluções para erros comuns: certificado não reconhecido, senha bloqueada ou token com falha.",
+    title: "Problemas de acesso",
+    description:
+      "Encontre orientações para resolver falhas comuns de acesso, instalação ou reconhecimento do certificado.",
     cta: "Ver soluções"
   },
   {
     icon: Headphones,
-    title: "Falar com Suporte",
-    description: "Não encontrou o que precisava? Nossa equipe está pronta para te ajudar via WhatsApp ou chat.",
+    title: "Falar com suporte",
+    description:
+      "Entre em contato com a equipe de suporte para receber ajuda personalizada.",
     cta: "Falar agora",
     href: "#fale-conosco",
     highlight: true
@@ -66,10 +73,10 @@ export function Suporte() {
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-ocean">Suporte</p>
           <h2 className="mt-3 text-2xl font-black tracking-tight text-ink sm:text-3xl lg:text-4xl">
-            Instalar Certificado
+            Suporte para instalar seu Certificado Digital
           </h2>
           <p className="mt-4 text-base leading-7 text-muted">
-            Encontre orientações para instalar, configurar e solucionar problemas com seu certificado digital.
+            Conte com orientações simples para instalar, configurar e usar seu certificado com segurança.
           </p>
         </div>
 

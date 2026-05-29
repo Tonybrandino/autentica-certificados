@@ -2,9 +2,9 @@
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Autêntica Certificados",
+  title: "OKAY | Certificado Digital e Soluções para Empresas",
   description:
-    "Compre e renove certificados digitais e-CPF, e-CNPJ, NF-e, CT-e e certificados em nuvem com validação online ou presencial."
+    "Emita, renove e instale seu Certificado Digital com a OKAY. Soluções modernas, suporte especializado, pagamento facilitado e serviços para a saúde do seu negócio."
 };
 
 export default function RootLayout({
