@@ -268,12 +268,8 @@ export function ProductGrid() {
         <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
           <div className="rounded-2xl border border-sky-100 bg-white/95 p-4 shadow-sm sm:p-5">
             <div className="grid gap-4 lg:grid-cols-[250px_1fr]">
-              <div className="relative rounded-xl border border-slate-100 bg-slate-50/70 p-3 sm:p-4">
-                <span
-                  className="absolute bottom-[22px] left-[26px] top-[22px] w-px bg-gradient-to-b from-sky-200 via-sky-300 to-slate-200"
-                  aria-hidden="true"
-                />
-                <div className="space-y-2">
+              <div className="flex flex-col rounded-xl border border-slate-100 bg-slate-50/70 p-3 sm:p-4">
+                <div className="flex flex-1 flex-col gap-2">
                   {timelineItems.map((item, index) => {
                     const itemIndex = steps.indexOf(item.key);
                     const isActive = item.key === activeStep;
@@ -284,7 +280,7 @@ export function ProductGrid() {
                         key={item.key}
                         type="button"
                         onClick={() => setActiveStep(item.key)}
-                        className={`focus-ring relative z-10 flex w-full items-start gap-3 rounded-lg border px-3 py-2 text-left transition ${
+                        className={`focus-ring flex flex-1 w-full items-start gap-3 rounded-lg border px-3 py-2 text-left transition ${
                           isActive
                             ? "border-ocean bg-white shadow-sm"
                             : "border-transparent bg-transparent hover:border-slate-200 hover:bg-white/80"
