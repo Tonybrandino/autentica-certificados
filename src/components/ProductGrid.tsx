@@ -283,7 +283,7 @@ export function ProductGrid() {
                         className={`focus-ring flex w-full flex-1 items-center gap-3 rounded-lg border px-3 py-2 text-left transition ${
                           isActive
                             ? "border-ocean bg-white shadow-sm"
-                            : "border-transparent bg-transparent hover:border-slate-200 hover:bg-white/80"
+                            : "border-slate-200 bg-white/70 hover:border-slate-300 hover:bg-white"
                         }`}
                       >
                         <span
