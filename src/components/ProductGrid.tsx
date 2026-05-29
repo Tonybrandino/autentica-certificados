@@ -267,9 +267,9 @@ export function ProductGrid() {
 
         <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
           <div className="rounded-2xl border border-sky-100 bg-white/95 p-4 shadow-sm sm:p-5">
-            <div className="grid gap-4 lg:grid-cols-[250px_1fr]">
-              <div className="flex flex-col rounded-xl border border-slate-100 bg-slate-50/70 p-3 sm:p-4">
-                <div className="flex flex-1 flex-col gap-2">
+            <div className="grid items-stretch gap-4 lg:grid-cols-[250px_1fr]">
+              <div className="flex h-full flex-col rounded-xl border border-slate-100 bg-slate-50/70 p-3 sm:p-4">
+                <div className="flex flex-1 flex-col justify-between">
                   {timelineItems.map((item, index) => {
                     const itemIndex = steps.indexOf(item.key);
                     const isActive = item.key === activeStep;
@@ -280,7 +280,7 @@ export function ProductGrid() {
                         key={item.key}
                         type="button"
                         onClick={() => setActiveStep(item.key)}
-                        className={`focus-ring flex flex-1 w-full items-start gap-3 rounded-lg border px-3 py-2 text-left transition ${
+                        className={`focus-ring flex w-full flex-1 items-center gap-3 rounded-lg border px-3 py-2 text-left transition ${
                           isActive
                             ? "border-ocean bg-white shadow-sm"
                             : "border-transparent bg-transparent hover:border-slate-200 hover:bg-white/80"
@@ -416,7 +416,7 @@ function StepPanel({ step, title, description, options, columns = 2 }: StepPanel
     columns === 3 ? "grid-cols-3" : columns === 1 ? "grid-cols-1" : "grid-cols-2";
 
   return (
-    <article className="rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-5 lg:min-h-[286px]">
+    <article className="flex h-full flex-col rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-5 lg:min-h-[286px]">
       <div className="mb-3 flex items-start justify-between gap-4">
         <div>
           <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-sky-400">{step}</p>
