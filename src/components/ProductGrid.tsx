@@ -267,9 +267,9 @@ export function ProductGrid() {
 
         <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
           <div className="rounded-2xl border border-sky-100 bg-white/95 p-4 shadow-sm sm:p-5">
-            <div className="grid items-stretch gap-4 lg:grid-cols-[250px_1fr]">
-              <div className="flex h-full flex-col rounded-xl border border-slate-100 bg-slate-50/70 p-3 sm:p-4">
-                <div className="flex flex-1 flex-col justify-between">
+            <div className="flex flex-col gap-4 lg:flex-row">
+              <div className="flex flex-col rounded-xl border border-slate-100 bg-slate-50/70 p-3 sm:p-4 lg:w-[250px] lg:shrink-0">
+                <div className="flex flex-col gap-2 lg:flex-1 lg:justify-between lg:gap-0">
                   {timelineItems.map((item, index) => {
                     const itemIndex = steps.indexOf(item.key);
                     const isActive = item.key === activeStep;
@@ -416,7 +416,7 @@ function StepPanel({ step, title, description, options, columns = 2 }: StepPanel
     columns === 3 ? "grid-cols-3" : columns === 1 ? "grid-cols-1" : "grid-cols-2";
 
   return (
-    <article className="flex h-full flex-col rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-5 lg:min-h-[286px]">
+    <article className="flex flex-1 flex-col rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-5 lg:min-h-[286px]">
       <div className="mb-3 flex items-start justify-between gap-4">
         <div>
           <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-sky-400">{step}</p>
