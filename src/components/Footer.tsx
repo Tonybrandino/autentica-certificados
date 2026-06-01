@@ -33,7 +33,7 @@ export function Footer() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_0.8fr]">
           <div>
             <a href="#" className="focus-ring inline-flex items-center rounded-lg" aria-label="Ir para o início">
-              <img src="/okay-logo.png" alt="OKAY" className="h-10 w-auto sm:h-11" />
+              <img src="/okay-logo.svg" alt="OKAY" className="h-10 w-auto sm:h-11" />
             </a>
             <p className="mt-5 max-w-xs text-sm leading-7 text-muted">
               Soluções digitais para emissão, renovação, suporte e gestão de certificados digitais,

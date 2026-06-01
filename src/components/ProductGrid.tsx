@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { CertificateProduct, ValidationMethod, ValidityStep } from "@/data/products";
 import { products, validationMethods } from "@/data/products";
@@ -26,7 +26,6 @@ import { useMemo, useState } from "react";
 type CertificateChoice = "pf" | "pj" | "nfe";
 type DeviceChoice = "arquivo" | "smartcard" | "smartcard-leitora" | "token";
 type StepKey = "validation" | "certificate" | "device" | "validity";
-
 const certificateOptions = [
   { id: "pf" as CertificateChoice, label: "Pessoa Física", helper: "e-CPF para uso pessoal", icon: UserRound },
   { id: "pj" as CertificateChoice, label: "Pessoa Jurídica", helper: "e-CNPJ para empresas", icon: Building2 },
@@ -75,7 +74,6 @@ export function ProductGrid() {
   const [device, setDevice] = useState<DeviceChoice>("arquivo");
   const [validity, setValidity] = useState<ValidityStep>(12);
   const [activeStep, setActiveStep] = useState<StepKey>("validation");
-
   const steps: StepKey[] = ["validation", "certificate", "device", "validity"];
   const stepIndex = steps.indexOf(activeStep);
   const canGoBack = stepIndex > 0;
@@ -95,9 +93,8 @@ export function ProductGrid() {
 
   function goNext() { if (canGoNext) setActiveStep(steps[stepIndex + 1]); }
   function goPrev() { if (canGoBack) setActiveStep(steps[stepIndex - 1]); }
-  function pick(key: StepKey, cb: () => void) {
+  function pick(cb: () => void) {
     cb();
-    if (activeStep === key && key !== "validity") goNext();
   }
 
   const stepDefs = [
@@ -110,7 +107,7 @@ export function ProductGrid() {
       options: orderedValidations.map(m => ({
         id: m.id, label: m.title, helper: m.subtitle,
         icon: validationIconById[m.id], selected: validation === m.id,
-        onClick: () => pick("validation", () => setValidation(m.id))
+        onClick: () => pick(() => setValidation(m.id))
       }))
     },
     {
@@ -122,7 +119,7 @@ export function ProductGrid() {
       options: certificateOptions.map(o => ({
         id: o.id, label: o.label, helper: o.helper,
         icon: o.icon, selected: certificate === o.id,
-        onClick: () => pick("certificate", () => setCertificate(o.id))
+        onClick: () => pick(() => setCertificate(o.id))
       }))
     },
     {
@@ -134,7 +131,7 @@ export function ProductGrid() {
       options: deviceOptions.map(o => ({
         id: o.id, label: o.label, helper: o.helper,
         icon: o.icon, selected: device === o.id,
-        onClick: () => pick("device", () => setDevice(o.id))
+        onClick: () => pick(() => setDevice(o.id))
       }))
     },
     {
@@ -154,6 +151,7 @@ export function ProductGrid() {
 
   const current = stepDefs.find(s => s.key === activeStep) ?? stepDefs[0];
   const isValidity = activeStep === "validity";
+  const checkoutHref = `/checkout?validation=${validation}&certificate=${certificate}&device=${device}&validity=${activeValidity ?? 12}`;
 
   return (
     <section
@@ -382,7 +380,7 @@ export function ProductGrid() {
             </div>
 
             <motion.a
-              href="#comprar"
+              href={checkoutHref}
               whileHover={{ y: -1 }}
               whileTap={{ scale: 0.985 }}
               className="focus-ring mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-trust px-4 py-3 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_18px_35px_rgba(92,175,24,0.26)] transition hover:bg-[#4e9f16]"
@@ -395,6 +393,7 @@ export function ProductGrid() {
             </p>
           </aside>
         </div>
+
       </div>
     </section>
   );

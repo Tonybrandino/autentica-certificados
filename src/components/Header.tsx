@@ -1,16 +1,17 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, ShoppingCart, X } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const navLinks = [
-  { label: "Sobre", href: "#sobre" },
-  { label: "Certificado Digital", href: "#certificados" },
-  { label: "Saúde do Seu Negócio", href: "#saude" },
-  { label: "Suporte", href: "#suporte" },
-  { label: "Dúvidas", href: "#duvidas" },
-  { label: "Fale Conosco", href: "#fale-conosco" }
+  { label: "Sobre", href: "/#sobre" },
+  { label: "Certificado Digital", href: "/#certificados" },
+  { label: "Saúde do Seu Negócio", href: "/#saude" },
+  { label: "Suporte", href: "/#suporte" },
+  { label: "Dúvidas", href: "/#duvidas" },
+  { label: "Fale Conosco", href: "/#fale-conosco" }
 ];
 
 export function Header() {
@@ -33,9 +34,9 @@ export function Header() {
       }`}
     >
       <div className="section-shell flex h-20 items-center justify-between gap-5">
-        <a href="#" className="focus-ring flex items-center rounded-lg" aria-label="Ir para o início">
-          <img src="/okay-logo.png" alt="Autêntica Certificados" className="h-10 w-auto sm:h-11" />
-        </a>
+        <Link href="/" className="focus-ring flex items-center rounded-lg" aria-label="Ir para o início">
+          <img src="/okay-logo.svg" alt="Autêntica Certificados" className="h-10 w-auto sm:h-11" />
+        </Link>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Navegação principal">
           {navLinks.map((link) => (
@@ -50,6 +51,13 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <Link
+            href="/checkout"
+            className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-full border border-lime-100 bg-white text-ocean shadow-sm smooth-ease hover:-translate-y-0.5 hover:border-ocean/40 hover:bg-lime-50"
+            aria-label="Ver carrinho de compras"
+          >
+            <ShoppingCart size={18} aria-hidden="true" />
+          </Link>
           <a
             href="#"
             className="focus-ring rounded-full bg-ocean px-5 py-2.5 text-sm font-extrabold text-white shadow-soft smooth-ease hover:-translate-y-0.5 hover:bg-[#32680f]"
@@ -89,6 +97,14 @@ export function Header() {
                 </a>
               ))}
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <Link
+                  href="/checkout"
+                  onClick={() => setIsOpen(false)}
+                  className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-lime-100 bg-white px-4 py-3 text-center text-sm font-extrabold text-ocean"
+                >
+                  <ShoppingCart size={16} aria-hidden="true" />
+                  Carrinho
+                </Link>
                 <a
                   href="#"
                   onClick={() => setIsOpen(false)}
@@ -104,4 +120,3 @@ export function Header() {
     </header>
   );
 }
-
