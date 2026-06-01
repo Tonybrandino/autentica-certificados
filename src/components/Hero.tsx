@@ -202,14 +202,6 @@ export function Hero() {
                 Escolher certificado
                 <ArrowRight size={17} aria-hidden="true" />
               </motion.a>
-              <motion.a
-                href="#assistente"
-                whileHover={{ y: -2, scale: 1.01 }}
-                whileTap={{ scale: 0.985 }}
-                className="focus-ring inline-flex items-center justify-center rounded-full border border-line bg-white px-6 py-3 text-sm font-extrabold text-ink smooth-ease hover:border-ocean/50 hover:text-ocean sm:px-7 sm:py-3.5"
-              >
-                Descobrir modelo ideal
-              </motion.a>
             </motion.div>
           </motion.div>
 

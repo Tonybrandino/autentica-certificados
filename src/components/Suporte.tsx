@@ -61,7 +61,7 @@ const supportItems = [
     description:
       "Entre em contato com a equipe de suporte para receber ajuda personalizada.",
     cta: "Falar agora",
-    href: "#fale-conosco",
+    href: "https://wa.me/5518991712107",
     highlight: true
   }
 ];
@@ -106,6 +106,8 @@ export function Suporte() {
               <p className="mt-2 flex-1 text-sm leading-6 text-muted">{description}</p>
               <a
                 href={href ?? "#suporte"}
+                target={href?.startsWith("http") ? "_blank" : undefined}
+                rel={href?.startsWith("http") ? "noopener noreferrer" : undefined}
                 className={`focus-ring mt-5 inline-flex items-center gap-1.5 text-sm font-extrabold smooth-ease ${
                   highlight ? "text-ocean hover:text-[#006B9A]" : "text-slate-600 hover:text-ocean"
                 }`}

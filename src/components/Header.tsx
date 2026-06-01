@@ -34,7 +34,7 @@ export function Header() {
     >
       <div className="section-shell flex h-20 items-center justify-between gap-5">
         <a href="#" className="focus-ring flex items-center rounded-lg" aria-label="Ir para o início">
-          <img src="/acd.svg" alt="Autêntica Certificados" className="h-10 w-auto sm:h-11" />
+          <img src="/okay-logo.png" alt="Autêntica Certificados" className="h-10 w-auto sm:h-11" />
         </a>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Navegação principal">
@@ -104,5 +104,4 @@ export function Header() {
     </header>
   );
 }
-
 

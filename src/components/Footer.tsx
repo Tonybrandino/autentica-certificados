@@ -12,7 +12,7 @@ const footerColumns = [
     heading: "Atendimento",
     links: [
       { label: "Fale Conosco", href: "#fale-conosco" },
-      { label: "WhatsApp", href: "https://wa.me/5500000000000" }, // Substituir pelos dados oficiais da OKAY
+      { label: "WhatsApp", href: "https://wa.me/5518991712107" },
       { label: "Dúvidas", href: "#duvidas" },
       { label: "Suporte", href: "#suporte" }
     ]
@@ -34,7 +34,7 @@ export function Footer() {
           {/* Coluna 1 — Identidade */}
           <div>
             <a href="#" className="focus-ring inline-flex items-center rounded-lg" aria-label="Ir para o início">
-              <img src="/acd.svg" alt="OKAY" className="h-10 w-auto sm:h-11" />
+              <img src="/okay-logo.png" alt="OKAY" className="h-10 w-auto sm:h-11" />
             </a>
             <p className="mt-5 max-w-xs text-sm leading-7 text-muted">
               Soluções digitais para emissão, renovação, suporte e gestão de certificados digitais,

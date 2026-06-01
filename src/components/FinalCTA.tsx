@@ -51,7 +51,9 @@ export function FinalCTA() {
                 <ArrowRight size={18} aria-hidden="true" />
               </a>
               <a
-                href="https://wa.me/5500000000000"
+                href="https://wa.me/5518991712107"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-white/35 px-7 py-3.5 text-sm font-extrabold text-white smooth-ease hover:-translate-y-0.5 hover:bg-white/10"
               >
                 <MessageCircle size={18} aria-hidden="true" />

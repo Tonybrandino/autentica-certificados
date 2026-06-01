@@ -215,7 +215,9 @@ export function FAQ() {
                   Ficou com dúvida sobre sua documentação específica?
                 </p>
                 <a
-                  href="#fale-conosco"
+                  href="https://wa.me/5518991712107"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="focus-ring inline-flex shrink-0 items-center gap-2 rounded-full border border-ocean/30 bg-white px-4 py-2 text-sm font-extrabold text-ocean smooth-ease hover:bg-ocean hover:text-white"
                 >
                   <MessageCircle size={15} aria-hidden="true" />

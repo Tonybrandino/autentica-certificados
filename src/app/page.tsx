@@ -24,8 +24,8 @@ export default function Home() {
         <Hero />
         <ProductGrid />
       </div>
-      <SaudeNegocio />
       <FAQ />
+      <SaudeNegocio />
       <Suporte />
       <SocialProof />
       <Contato />

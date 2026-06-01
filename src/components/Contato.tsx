@@ -8,17 +8,17 @@ const channels = [
   {
     icon: Phone,
     label: "Telefone",
-    value: "(00) 0000-0000", // Substituir pelos dados oficiais da OKAY
+    value: "(18) 99171-2107",
     detail: "Seg a Sex · 8h às 18h",
-    href: "tel:0000000000",
+    href: "tel:+5518991712107",
     color: "bg-sky-50 text-ocean"
   },
   {
     icon: MessageCircle,
     label: "WhatsApp",
-    value: "(00) 00000-0000", // Substituir pelos dados oficiais da OKAY
+    value: "(18) 99171-2107",
     detail: "Atendimento rápido",
-    href: "https://wa.me/5500000000000", // Substituir pelos dados oficiais da OKAY
+    href: "https://wa.me/5518991712107",
     color: "bg-emerald-50 text-emerald-600",
     hoverBorder: "hover:border-emerald-200"
   },
