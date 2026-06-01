@@ -146,7 +146,6 @@ export function FAQ() {
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[220px_1fr]">
-          {/* Sidebar de categorias — vertical em desktop, horizontal rolável em mobile */}
           <div
             role="tablist"
             aria-label="Categorias de documentação"
@@ -173,7 +172,6 @@ export function FAQ() {
             ))}
           </div>
 
-          {/* Painel de conteúdo */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeDocCategory}
@@ -206,7 +204,7 @@ export function FAQ() {
                 ))}
               </ul>
 
-              <div className="mt-6 rounded-xl border border-sky-100 bg-sky-50/60 px-4 py-3 text-sm leading-6 text-slate-600">
+              <div className="mt-6 rounded-xl border border-lime-100 bg-lime-50/60 px-4 py-3 text-sm leading-6 text-slate-600">
                 <strong className="font-black text-ocean">Atenção:</strong> {activeDoc.notes}
               </div>
 

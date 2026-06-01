@@ -18,7 +18,7 @@ export default function Home() {
           aria-hidden="true"
         />
         <div
-          className="absolute left-0 right-0 top-24 -z-10 mx-auto h-[34rem] max-w-6xl rounded-full bg-sky-200/30 blur-3xl"
+          className="absolute left-0 right-0 top-24 -z-10 mx-auto h-[34rem] max-w-6xl rounded-full bg-lime-200/30 blur-3xl"
           aria-hidden="true"
         />
         <Hero />

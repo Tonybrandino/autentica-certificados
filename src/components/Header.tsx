@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
@@ -28,7 +28,7 @@ export function Header() {
     <header
       className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ${
         scrolled
-          ? "border-sky-100 bg-white/90 shadow-[0_10px_30px_rgba(0,120,174,0.10)] backdrop-blur-xl"
+          ? "border-lime-100 bg-white/90 shadow-[0_10px_30px_rgba(63,127,18,0.12)] backdrop-blur-xl"
           : "border-transparent bg-white/70 backdrop-blur-md"
       }`}
     >
@@ -52,7 +52,7 @@ export function Header() {
         <div className="hidden items-center gap-3 lg:flex">
           <a
             href="#"
-            className="focus-ring rounded-full bg-ocean px-5 py-2.5 text-sm font-extrabold text-white shadow-soft smooth-ease hover:-translate-y-0.5 hover:bg-[#006B9A]"
+            className="focus-ring rounded-full bg-ocean px-5 py-2.5 text-sm font-extrabold text-white shadow-soft smooth-ease hover:-translate-y-0.5 hover:bg-[#32680f]"
           >
             LOGIN
           </a>

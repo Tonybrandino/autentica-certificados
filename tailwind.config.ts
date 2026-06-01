@@ -1,4 +1,4 @@
-﻿import type { Config } from "tailwindcss";
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
@@ -12,15 +12,15 @@ const config: Config = {
       colors: {
         ink: "#0f172a",
         muted: "#4b5c79",
-        line: "#d9e3f5",
-        ocean: "#0078AE",
-        cyanx: "#00B3F5",
-        trust: "#14b87a",
+        line: "#dfead8",
+        ocean: "#3f7f12",
+        cyanx: "#7ed038",
+        trust: "#5caf18",
         violetx: "#5c7cff"
       },
       boxShadow: {
-        soft: "0 18px 45px rgba(0, 120, 174, 0.12)",
-        lift: "0 28px 74px rgba(0, 120, 174, 0.18)"
+        soft: "0 18px 45px rgba(63, 127, 18, 0.14)",
+        lift: "0 28px 74px rgba(63, 127, 18, 0.2)"
       },
       fontFamily: {
         sans: ["Manrope", "ui-sans-serif", "system-ui", "sans-serif"]

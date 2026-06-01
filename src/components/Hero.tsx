@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { ArrowRight, BadgeCheck, LockKeyhole, RadioTower, ShieldCheck } from "lucide-react";
@@ -197,7 +197,7 @@ export function Hero() {
                 href="#certificados"
                 whileHover={{ y: -2, scale: 1.01 }}
                 whileTap={{ scale: 0.985 }}
-                className="focus-ring inline-flex items-center justify-center gap-2 rounded-full bg-ocean px-6 py-3 text-sm font-extrabold text-white shadow-soft smooth-ease hover:bg-[#006B9A] sm:px-7 sm:py-3.5"
+                className="focus-ring inline-flex items-center justify-center gap-2 rounded-full bg-ocean px-6 py-3 text-sm font-extrabold text-white shadow-soft smooth-ease hover:bg-[#32680f] sm:px-7 sm:py-3.5"
               >
                 Escolher certificado
                 <ArrowRight size={17} aria-hidden="true" />

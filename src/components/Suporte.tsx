@@ -91,13 +91,13 @@ export function Suporte() {
               whileHover={{ y: -3 }}
               className={`flex flex-col rounded-2xl border p-5 shadow-sm transition sm:p-6 ${
                 highlight
-                  ? "border-ocean/30 bg-gradient-to-br from-sky-50 to-cyan-50"
+                  ? "border-ocean/30 bg-gradient-to-br from-lime-50 to-green-50"
                   : "border-slate-200 bg-white"
               }`}
             >
               <div
                 className={`flex h-11 w-11 items-center justify-center rounded-xl ${
-                  highlight ? "bg-ocean text-white" : "bg-sky-50 text-ocean"
+                  highlight ? "bg-ocean text-white" : "bg-lime-50 text-ocean"
                 }`}
               >
                 <Icon size={21} aria-hidden="true" />
@@ -109,7 +109,7 @@ export function Suporte() {
                 target={href?.startsWith("http") ? "_blank" : undefined}
                 rel={href?.startsWith("http") ? "noopener noreferrer" : undefined}
                 className={`focus-ring mt-5 inline-flex items-center gap-1.5 text-sm font-extrabold smooth-ease ${
-                  highlight ? "text-ocean hover:text-[#006B9A]" : "text-slate-600 hover:text-ocean"
+                  highlight ? "text-ocean hover:text-[#32680f]" : "text-slate-600 hover:text-ocean"
                 }`}
                 aria-label={`${cta}: ${title}`}
               >

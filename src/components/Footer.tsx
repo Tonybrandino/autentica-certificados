@@ -31,7 +31,6 @@ export function Footer() {
     <footer className="border-t border-slate-200 bg-white">
       <div className="section-shell py-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_0.8fr]">
-          {/* Coluna 1 — Identidade */}
           <div>
             <a href="#" className="focus-ring inline-flex items-center rounded-lg" aria-label="Ir para o início">
               <img src="/okay-logo.png" alt="OKAY" className="h-10 w-auto sm:h-11" />
@@ -42,7 +41,6 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Colunas 2–4 */}
           {footerColumns.map(({ heading, links }) => (
             <div key={heading}>
               <h3 className="text-sm font-black uppercase tracking-[0.18em] text-ink">{heading}</h3>

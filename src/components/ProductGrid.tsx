@@ -158,13 +158,12 @@ export function ProductGrid() {
   return (
     <section
       id="certificados"
-      className="relative overflow-hidden bg-[linear-gradient(180deg,#f7fbff_0%,#eef8ff_48%,#f8fcff_100%)] py-16 sm:py-20"
+      className="relative overflow-hidden bg-[linear-gradient(180deg,#f8fcf3_0%,#eef8e8_48%,#f9fdf5_100%)] py-16 sm:py-20"
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-200 to-transparent" aria-hidden="true" />
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-sky-200 to-transparent" aria-hidden="true" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime-200 to-transparent" aria-hidden="true" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-lime-200 to-transparent" aria-hidden="true" />
       <div className="section-shell relative">
 
-        {/* Section header */}
         <div className="mb-8 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
           <div className="max-w-2xl">
             <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-ocean">
@@ -178,25 +177,22 @@ export function ProductGrid() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-100 bg-white px-3 py-2 text-xs font-extrabold text-ocean shadow-sm">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-lime-100 bg-white px-3 py-2 text-xs font-extrabold text-ocean shadow-sm">
               <ShieldCheck size={14} aria-hidden="true" />
               ICP-Brasil
             </span>
-            <span className="inline-flex items-center rounded-full border border-emerald-100 bg-white px-3 py-2 text-xs font-extrabold text-trust shadow-sm">
+            <span className="inline-flex items-center rounded-full border border-lime-100 bg-white px-3 py-2 text-xs font-extrabold text-trust shadow-sm">
               Pix com desconto
             </span>
           </div>
         </div>
 
-        {/* Outer grid: main card + summary sidebar */}
         <div className="grid items-stretch gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
 
-          {/* ── Main card ── */}
-          <div className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-lift">
+          <div className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-lime-100 bg-white shadow-lift">
             <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-ocean via-cyanx to-trust" aria-hidden="true" />
 
-            {/* Horizontal step tracker */}
-            <div className="overflow-x-auto border-b border-sky-100 bg-slate-50/70 px-4 py-4 sm:px-5 lg:px-6">
+            <div className="overflow-x-auto border-b border-lime-100 bg-slate-50/70 px-4 py-4 sm:px-5 lg:px-6">
               <ol className="grid min-w-[720px] grid-cols-4 gap-2 lg:min-w-0">
                 {stepDefs.map(s => {
                   const done = steps.indexOf(s.key) < stepIndex;
@@ -210,9 +206,9 @@ export function ProductGrid() {
                         aria-current={active ? "step" : undefined}
                         className={`focus-ring flex h-full w-full items-center gap-3 rounded-2xl border px-3 py-3 text-left transition ${
                           active
-                            ? "border-ocean bg-white shadow-[0_14px_30px_rgba(0,120,174,0.12)]"
+                            ? "border-ocean bg-white shadow-[0_14px_30px_rgba(63,127,18,0.14)]"
                             : done
-                            ? "border-sky-100 bg-white hover:border-sky-200"
+                            ? "border-lime-100 bg-white hover:border-lime-200"
                             : "border-transparent bg-transparent hover:border-slate-200 hover:bg-white"
                         }`}
                       >
@@ -221,7 +217,7 @@ export function ProductGrid() {
                             done
                               ? "bg-ocean text-white"
                               : active
-                              ? "border-2 border-ocean bg-white text-ocean shadow-[0_0_0_4px_rgba(0,120,174,0.10)]"
+                              ? "border-2 border-ocean bg-white text-ocean shadow-[0_0_0_4px_rgba(63,127,18,0.12)]"
                               : "border-2 border-slate-200 bg-white text-slate-400"
                           }`}
                         >
@@ -245,10 +241,8 @@ export function ProductGrid() {
               </ol>
             </div>
 
-            {/* Step content */}
             <div className="flex min-h-[400px] flex-1 lg:min-h-[390px]">
 
-              {/* ── Step content ── */}
               <div className="flex min-w-0 flex-1 flex-col p-6 sm:p-7 lg:p-9">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -259,10 +253,9 @@ export function ProductGrid() {
                     transition={{ duration: 0.18, ease: "easeOut" }}
                     className="flex flex-1 flex-col"
                   >
-                    {/* Step header */}
                     <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
                       <div>
-                        <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-sky-400">
+                        <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-lime-700">
                           Passo {current.num} de 4
                         </p>
                           <h3 className="mt-1 text-2xl font-black text-ink sm:text-[1.7rem]">
@@ -270,12 +263,11 @@ export function ProductGrid() {
                         </h3>
                         <p className="mt-1 text-sm leading-6 text-slate-500">{current.description}</p>
                       </div>
-                      <span className="inline-flex w-fit items-center rounded-full border border-sky-100 bg-sky-50 px-3 py-1.5 text-xs font-extrabold text-ocean">
+                      <span className="inline-flex w-fit items-center rounded-full border border-lime-100 bg-lime-50 px-3 py-1.5 text-xs font-extrabold text-ocean">
                         {Math.round(((stepIndex + 1) / steps.length) * 100)}% concluído
                       </span>
                     </div>
 
-                    {/* Options */}
                     <div
                       className={`grid max-w-2xl gap-3 ${
                         isValidity
@@ -290,19 +282,17 @@ export function ProductGrid() {
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Navigation */}
                 <div className="mt-7 flex items-center justify-between gap-6 rounded-2xl border border-slate-100 bg-slate-50/70 p-3">
                   <button
                     type="button"
                     onClick={goPrev}
                     disabled={!canGoBack}
-                    className="focus-ring inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-sm font-extrabold text-slate-600 transition enabled:hover:border-sky-200 enabled:hover:text-ocean disabled:cursor-not-allowed disabled:opacity-35"
+                    className="focus-ring inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-sm font-extrabold text-slate-600 transition enabled:hover:border-lime-200 enabled:hover:text-ocean disabled:cursor-not-allowed disabled:opacity-35"
                   >
                     <ArrowLeft size={15} aria-hidden="true" />
                     Voltar
                   </button>
 
-                  {/* Progress dots */}
                   <div className="flex items-center gap-2" aria-hidden="true">
                     {steps.map((s, i) => (
                       <span
@@ -320,7 +310,7 @@ export function ProductGrid() {
                     type="button"
                     onClick={goNext}
                     disabled={!canGoNext}
-                    className="focus-ring inline-flex min-h-11 items-center gap-2 rounded-xl bg-ocean px-5 text-sm font-extrabold text-white shadow-soft transition enabled:hover:bg-[#006B9A] disabled:cursor-not-allowed disabled:opacity-35"
+                    className="focus-ring inline-flex min-h-11 items-center gap-2 rounded-xl bg-ocean px-5 text-sm font-extrabold text-white shadow-soft transition enabled:hover:bg-[#32680f] disabled:cursor-not-allowed disabled:opacity-35"
                   >
                     Próximo
                     <ArrowRight size={15} aria-hidden="true" />
@@ -330,20 +320,18 @@ export function ProductGrid() {
             </div>
           </div>
 
-          {/* ── Summary sidebar ── */}
-          <aside className="relative overflow-hidden rounded-3xl border border-sky-100 bg-white p-5 shadow-lift lg:sticky lg:top-24 lg:h-fit">
+          <aside className="relative overflow-hidden rounded-3xl border border-lime-100 bg-white p-5 shadow-lift lg:sticky lg:top-24 lg:h-fit">
             <div className="absolute inset-x-0 top-0 h-1 bg-trust" aria-hidden="true" />
             <div className="flex items-center justify-between gap-3">
               <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">
                 Total Estimado
               </p>
-              <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-1 text-[10px] font-extrabold text-ocean">
+              <span className="inline-flex items-center gap-1 rounded-full bg-lime-50 px-2.5 py-1 text-[10px] font-extrabold text-ocean">
                 <ShieldCheck size={12} aria-hidden="true" />
                 ICP-Brasil
               </span>
             </div>
 
-            {/* Parcelado */}
             <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
               <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">Em 12 vezes</p>
               <p className="mt-0.5 font-black leading-none text-ink">
@@ -355,10 +343,9 @@ export function ProductGrid() {
               </p>
             </div>
 
-            {/* À vista */}
             <div
               className="mt-3 rounded-2xl border px-4 py-3"
-              style={{ background: "rgba(20,184,122,0.09)", borderColor: "rgba(20,184,122,0.28)" }}
+              style={{ background: "rgba(126,208,56,0.12)", borderColor: "rgba(92,175,24,0.3)" }}
             >
               <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-trust">
                 À vista com Pix
@@ -367,7 +354,6 @@ export function ProductGrid() {
               <p className="text-[11px] font-semibold text-slate-500">5% de desconto</p>
             </div>
 
-            {/* Formas de pagamento */}
             <div className="mt-3 rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-sm">
               <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">
                 Pagamento
@@ -377,7 +363,6 @@ export function ProductGrid() {
               </p>
             </div>
 
-            {/* Resumo seleções */}
             <div className="mt-3 space-y-2 rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
               <SummaryRow label="Validação" value={selVal?.title ?? "-"} />
               <SummaryRow label="Certificado" value={selCert.label} />
@@ -385,7 +370,6 @@ export function ProductGrid() {
               <SummaryRow label="Validade" value={activeValidity ? `${activeValidity} meses` : "-"} />
             </div>
 
-            {/* Progress bar */}
             <div className="mt-4 flex gap-1" aria-hidden="true">
               {steps.map((s, i) => (
                 <span
@@ -401,7 +385,7 @@ export function ProductGrid() {
               href="#comprar"
               whileHover={{ y: -1 }}
               whileTap={{ scale: 0.985 }}
-              className="focus-ring mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-trust px-4 py-3 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_18px_35px_rgba(20,184,122,0.24)] transition hover:bg-[#12a76f]"
+              className="focus-ring mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-trust px-4 py-3 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_18px_35px_rgba(92,175,24,0.26)] transition hover:bg-[#4e9f16]"
             >
               Continuar
               <ArrowRight size={16} aria-hidden="true" />
@@ -433,15 +417,15 @@ function OptionCard({ label, helper, icon: Icon, selected, onClick }: OptionCard
       whileTap={{ scale: 0.985 }}
       className={`focus-ring group flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition ${
         selected
-          ? "border-ocean bg-gradient-to-br from-sky-50 to-cyan-50/70 shadow-[0_16px_35px_rgba(0,120,174,0.14)]"
-          : "border-slate-200 bg-white hover:border-sky-200 hover:bg-sky-50/40 hover:shadow-soft"
+          ? "border-ocean bg-gradient-to-br from-lime-50 to-green-50/70 shadow-[0_16px_35px_rgba(63,127,18,0.16)]"
+          : "border-slate-200 bg-white hover:border-lime-200 hover:bg-lime-50/40 hover:shadow-soft"
       }`}
     >
       <span
         className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition ${
           selected
             ? "bg-ocean text-white"
-            : "bg-slate-100 text-slate-500 group-hover:bg-sky-100 group-hover:text-ocean"
+            : "bg-slate-100 text-slate-500 group-hover:bg-lime-100 group-hover:text-ocean"
         }`}
         aria-hidden="true"
       >

@@ -11,7 +11,7 @@ const channels = [
     value: "(18) 99171-2107",
     detail: "Seg a Sex · 8h às 18h",
     href: "tel:+5518991712107",
-    color: "bg-sky-50 text-ocean"
+    color: "bg-lime-50 text-ocean"
   },
   {
     icon: MessageCircle,
@@ -19,16 +19,16 @@ const channels = [
     value: "(18) 99171-2107",
     detail: "Atendimento rápido",
     href: "https://wa.me/5518991712107",
-    color: "bg-emerald-50 text-emerald-600",
-    hoverBorder: "hover:border-emerald-200"
+    color: "bg-lime-50 text-green-700",
+    hoverBorder: "hover:border-lime-200"
   },
   {
     icon: Mail,
     label: "E-mail",
-    value: "contato@okay.com.br", // Substituir pelos dados oficiais da OKAY
+    value: "contato@okay.com.br",
     detail: "Resposta em até 1 dia útil",
-    href: "mailto:contato@okay.com.br", // Substituir pelos dados oficiais da OKAY
-    color: "bg-sky-50 text-ocean"
+    href: "mailto:contato@okay.com.br",
+    color: "bg-lime-50 text-ocean"
   }
 ];
 
@@ -63,7 +63,6 @@ export function Contato() {
         </div>
 
         <div className="mx-auto mt-12 grid max-w-5xl gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-start">
-          {/* Canais de atendimento */}
           <div className="space-y-4">
             {channels.map(({ icon: Icon, label, value, detail, href, color, hoverBorder }) => (
               <a
@@ -71,7 +70,7 @@ export function Contato() {
                 href={href}
                 target={href.startsWith("http") ? "_blank" : undefined}
                 rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-                className={`focus-ring flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm smooth-ease hover:shadow-soft ${hoverBorder ?? "hover:border-sky-200"}`}
+                className={`focus-ring flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm smooth-ease hover:shadow-soft ${hoverBorder ?? "hover:border-lime-200"}`}
                 aria-label={`Entrar em contato via ${label}`}
               >
                 <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${color}`}>
@@ -85,20 +84,8 @@ export function Contato() {
               </a>
             ))}
 
-            {/*
-              BOTMAKER WEBCHAT — integração futura
-              Para ativar o webchat Botmaker, insira o script fornecido pela plataforma
-              dentro da tag <Script> do Next.js (src/app/layout.tsx).
-              Slot preparado abaixo — não remover.
-            */}
-            <div
-              id="botmaker-webchat-container"
-              aria-label="Chat de atendimento online"
-              className="sr-only"
-            />
           </div>
 
-          {/* Formulário de contato */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft sm:p-8">
             {formState === "sent" ? (
               <motion.div
@@ -199,7 +186,7 @@ export function Contato() {
                   disabled={formState === "sending"}
                   whileHover={{ y: -1 }}
                   whileTap={{ scale: 0.985 }}
-                  className="focus-ring mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-ocean px-6 py-3.5 text-sm font-extrabold text-white shadow-soft smooth-ease hover:bg-[#006B9A] disabled:opacity-60"
+                  className="focus-ring mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-ocean px-6 py-3.5 text-sm font-extrabold text-white shadow-soft smooth-ease hover:bg-[#32680f] disabled:opacity-60"
                 >
                   {formState === "sending" ? (
                     <>
