@@ -58,12 +58,12 @@ export function Header() {
           >
             <ShoppingCart size={18} aria-hidden="true" />
           </Link>
-          <a
-            href="#"
+          <Link
+            href="/login"
             className="focus-ring rounded-full bg-ocean px-5 py-2.5 text-sm font-extrabold text-white shadow-soft smooth-ease hover:-translate-y-0.5 hover:bg-[#32680f]"
           >
             LOGIN
-          </a>
+          </Link>
         </div>
 
         <button
@@ -105,13 +105,13 @@ export function Header() {
                   <ShoppingCart size={16} aria-hidden="true" />
                   Carrinho
                 </Link>
-                <a
-                  href="#"
+                <Link
+                  href="/login"
                   onClick={() => setIsOpen(false)}
                   className="focus-ring rounded-full bg-ocean px-4 py-3 text-center text-sm font-extrabold text-white"
                 >
                   LOGIN
-                </a>
+                </Link>
               </div>
             </nav>
           </motion.div>
