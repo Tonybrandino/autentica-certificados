@@ -10,6 +10,7 @@ import {
   CalendarDays,
   Check,
   CheckCircle2,
+  Cloud,
   CreditCard,
   FileArchive,
   HardDrive,
@@ -24,7 +25,7 @@ import {
 import { useMemo, useState } from "react";
 
 type CertificateChoice = "pf" | "pj" | "nfe";
-type DeviceChoice = "arquivo" | "smartcard" | "smartcard-leitora" | "token";
+type DeviceChoice = "arquivo" | "smartcard" | "smartcard-leitora" | "token" | "nuvem";
 type StepKey = "validation" | "certificate" | "device" | "validity";
 const certificateOptions = [
   { id: "pf" as CertificateChoice, label: "Pessoa Física", helper: "e-CPF para uso pessoal", icon: UserRound },
@@ -34,9 +35,10 @@ const certificateOptions = [
 
 const deviceOptions = [
   { id: "arquivo" as DeviceChoice, label: "Arquivo A1", helper: "Instalado no computador", productType: "A1" as const, surcharge: 0, icon: FileArchive },
-  { id: "smartcard" as DeviceChoice, label: "SmartCard", helper: "A3 em cartão (+R$ 70)", productType: "A3" as const, surcharge: 70, icon: CreditCard },
-  { id: "smartcard-leitora" as DeviceChoice, label: "SmartCard + Leitora", helper: "A3 com leitora inclusa (+R$ 120)", productType: "A3" as const, surcharge: 120, icon: HardDrive },
-  { id: "token" as DeviceChoice, label: "Token USB", helper: "A3 em mídia USB (+R$ 90)", productType: "A3" as const, surcharge: 90, icon: KeyRound }
+  { id: "smartcard" as DeviceChoice, label: "Cartão", helper: "A3 em cartão (+R$ 70)", productType: "A3" as const, surcharge: 70, icon: CreditCard },
+  { id: "smartcard-leitora" as DeviceChoice, label: "Cartão + Leitora", helper: "A3 com leitora inclusa (+R$ 120)", productType: "A3" as const, surcharge: 120, icon: HardDrive },
+  { id: "token" as DeviceChoice, label: "Token USB", helper: "A3 em mídia USB (+R$ 90)", productType: "A3" as const, surcharge: 90, icon: KeyRound },
+  { id: "nuvem" as DeviceChoice, label: "Certificado em nuvem", helper: "Uso online sem mídia física", productType: "Nuvem" as const, surcharge: 0, icon: Cloud }
 ];
 
 const validationIconById: Record<ValidationMethod, typeof Video> = {
@@ -57,9 +59,14 @@ function getAvailableValidities(product: CertificateProduct) {
   return Object.keys(product.pricesByValidity).map(Number).sort((a, b) => a - b) as ValidityStep[];
 }
 
+function getAvailableDeviceOptions(certificate: CertificateChoice) {
+  return certificate === "pf" ? deviceOptions : deviceOptions.filter(option => option.id !== "nuvem");
+}
+
 function getProduct(certificate: CertificateChoice, device: DeviceChoice) {
   if (certificate === "nfe") return products.find(p => p.id === "nfe") ?? null;
-  const dev = deviceOptions.find(o => o.id === device) ?? deviceOptions[0];
+  const availableDevices = getAvailableDeviceOptions(certificate);
+  const dev = availableDevices.find(o => o.id === device) ?? availableDevices[0];
   const profile = certificate === "pf" ? "pf" : "pj";
   return (
     products.find(p => p.profile === profile && p.type === dev.productType) ??
@@ -79,7 +86,8 @@ export function ProductGrid() {
   const canGoBack = stepIndex > 0;
   const canGoNext = stepIndex < steps.length - 1;
 
-  const selDev = deviceOptions.find(o => o.id === device) ?? deviceOptions[0];
+  const availableDeviceOptions = useMemo(() => getAvailableDeviceOptions(certificate), [certificate]);
+  const selDev = availableDeviceOptions.find(o => o.id === device) ?? availableDeviceOptions[0];
   const selVal = orderedValidations.find(m => m.id === validation) ?? orderedValidations[0];
   const selCert = certificateOptions.find(o => o.id === certificate) ?? certificateOptions[0];
   const selProduct = useMemo(() => getProduct(certificate, device), [certificate, device]);
@@ -119,7 +127,12 @@ export function ProductGrid() {
       options: certificateOptions.map(o => ({
         id: o.id, label: o.label, helper: o.helper,
         icon: o.icon, selected: certificate === o.id,
-        onClick: () => pick(() => setCertificate(o.id))
+        onClick: () => pick(() => {
+          setCertificate(o.id);
+          if (o.id !== "pf" && device === "nuvem") {
+            setDevice("arquivo");
+          }
+        })
       }))
     },
     {
@@ -128,7 +141,7 @@ export function ProductGrid() {
       label: "Dispositivo",
       value: selDev.label,
       description: "Selecione a forma de armazenamento.",
-      options: deviceOptions.map(o => ({
+      options: availableDeviceOptions.map(o => ({
         id: o.id, label: o.label, helper: o.helper,
         icon: o.icon, selected: device === o.id,
         onClick: () => pick(() => setDevice(o.id))

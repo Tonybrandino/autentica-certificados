@@ -37,7 +37,7 @@ export const validationMethods: Array<{
   },
   {
     id: "renovacao",
-    title: "Renovação automática",
+    title: "Emissão automática",
     subtitle: "Para titulares elegíveis com processo digital simplificado."
   }
 ];
@@ -96,10 +96,7 @@ export const products: CertificateProduct[] = [
     ],
     badge: "Mobilidade total",
     pricesByValidity: {
-      12: 269,
-      24: 359,
-      36: 439,
-      60: 629
+      12: 269
     }
   },
   {

@@ -183,7 +183,7 @@ export function Hero() {
               <span className="block">Certificado Digital ICP-Brasil</span>
             </h1>
             <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-muted sm:mt-6 sm:text-base sm:leading-8 lg:mx-0 lg:text-lg">
-              Escolha entre e-CPF, e-CNPJ, NF-e e certificado em nuvem. Compare o modelo ideal, selecione a validade e
+              Escolha entre e-CPF, e-CNPJ, NF-e e e-cpf em nuvem. Compare o modelo ideal, selecione a validade e
               finalize com o método de validação em um fluxo simples.
             </p>
 

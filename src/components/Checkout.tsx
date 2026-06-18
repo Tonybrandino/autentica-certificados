@@ -2,25 +2,34 @@
 
 import type { CertificateProduct, ValidationMethod, ValidityStep } from "@/data/products";
 import { products, validationMethods } from "@/data/products";
-import { motion } from "framer-motion";
 import {
   ArrowLeft,
   BadgeCheck,
   Banknote,
   Barcode,
-  CheckCircle2,
   CreditCard,
   ShieldCheck,
   ShoppingCart
 } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import type { FormEvent } from "react";
 import { useMemo, useState } from "react";
 
 type CertificateChoice = "pf" | "pj" | "nfe";
-type DeviceChoice = "arquivo" | "smartcard" | "smartcard-leitora" | "token";
+type DeviceChoice = "arquivo" | "smartcard" | "smartcard-leitora" | "token" | "nuvem";
 type PaymentMethod = "card" | "pix" | "boleto";
-type PaymentStatus = "idle" | "paid";
+type CheckoutStep = "details" | "payment";
+type CertificateField = {
+  name: string;
+  label: string;
+  type?: string;
+  placeholder: string;
+  required?: boolean;
+  wide?: boolean;
+  inputMode?: "text" | "email" | "tel" | "numeric";
+  maxLength?: number;
+};
 
 const ADDON_MONTHLY_PRICE = 9.9;
 const pixCopyPaste =
@@ -35,9 +44,10 @@ const certificateOptions = [
 
 const deviceOptions = [
   { id: "arquivo" as DeviceChoice, label: "Arquivo A1", productType: "A1" as const, surcharge: 0 },
-  { id: "smartcard" as DeviceChoice, label: "SmartCard", productType: "A3" as const, surcharge: 70 },
-  { id: "smartcard-leitora" as DeviceChoice, label: "SmartCard + Leitora", productType: "A3" as const, surcharge: 120 },
-  { id: "token" as DeviceChoice, label: "Token USB", productType: "A3" as const, surcharge: 90 }
+  { id: "smartcard" as DeviceChoice, label: "Cartão", productType: "A3" as const, surcharge: 70 },
+  { id: "smartcard-leitora" as DeviceChoice, label: "Cartão + Leitora", productType: "A3" as const, surcharge: 120 },
+  { id: "token" as DeviceChoice, label: "Token USB", productType: "A3" as const, surcharge: 90 },
+  { id: "nuvem" as DeviceChoice, label: "Certificado em nuvem", productType: "Nuvem" as const, surcharge: 0 }
 ];
 
 const paymentOptions = [
@@ -45,6 +55,64 @@ const paymentOptions = [
   { id: "pix" as PaymentMethod, label: "Pix", helper: "QR Code e copia e cola", icon: Banknote },
   { id: "boleto" as PaymentMethod, label: "Boleto", helper: "Abrir e imprimir PDF", icon: Barcode }
 ];
+
+const certificateForms: Record<CertificateChoice, {
+  eyebrow: string;
+  title: string;
+  description: string;
+  note: string;
+  fields: CertificateField[];
+}> = {
+  pf: {
+    eyebrow: "Dados do titular",
+    title: "Preencha os dados do e-CPF",
+    description: "Use os dados do titular que fará a validação de identidade.",
+    note: "Nome, CPF, data de nascimento e e-mail são a base do cadastro ICP-Brasil para pessoa física. RG e telefone ajudam nossa equipe na conferência.",
+    fields: [
+      { name: "fullName", label: "Nome completo", placeholder: "Nome como consta no CPF", required: true, wide: true },
+      { name: "cpf", label: "CPF", placeholder: "000.000.000-00", required: true, inputMode: "numeric" },
+      { name: "birthDate", label: "Data de nascimento", placeholder: "dd/mm/aaaa", required: true, type: "date" },
+      { name: "email", label: "E-mail do titular", placeholder: "nome@email.com", required: true, type: "email", inputMode: "email" },
+      { name: "phone", label: "Telefone/WhatsApp", placeholder: "(00) 00000-0000", required: true, inputMode: "tel" },
+      { name: "rg", label: "RG ou CNH", placeholder: "Documento com foto", inputMode: "text" }
+    ]
+  },
+  pj: {
+    eyebrow: "Dados da empresa",
+    title: "Preencha os dados do e-CNPJ",
+    description: "Informe a empresa titular e o responsável legal perante o CNPJ.",
+    note: "Para pessoa jurídica, o certificado cruza CNPJ válido com os dados do responsável legal. Cidade e UF ajudam a preparar o cadastro da emissão.",
+    fields: [
+      { name: "corporateName", label: "Razão social", placeholder: "Razão social da empresa", required: true, wide: true },
+      { name: "cnpj", label: "CNPJ", placeholder: "00.000.000/0000-00", required: true, inputMode: "numeric" },
+      { name: "companyCity", label: "Cidade da empresa", placeholder: "Cidade", required: true },
+      { name: "companyState", label: "UF", placeholder: "UF", required: true, maxLength: 2 },
+      { name: "responsibleName", label: "Nome do responsável", placeholder: "Responsável perante o CNPJ", required: true, wide: true },
+      { name: "responsibleCpf", label: "CPF do responsável", placeholder: "000.000.000-00", required: true, inputMode: "numeric" },
+      { name: "responsibleBirthDate", label: "Nascimento do responsável", placeholder: "dd/mm/aaaa", required: true, type: "date" },
+      { name: "responsibleEmail", label: "E-mail do responsável", placeholder: "responsavel@email.com", required: true, type: "email", inputMode: "email" },
+      { name: "responsiblePhone", label: "Telefone/WhatsApp", placeholder: "(00) 00000-0000", required: true, inputMode: "tel" }
+    ]
+  },
+  nfe: {
+    eyebrow: "Dados fiscais",
+    title: "Preencha os dados para NF-e",
+    description: "Informe os dados da empresa emissora e do responsável pela validação.",
+    note: "NF-e usa certificado de pessoa jurídica para emissão fiscal. A inscrição estadual e o e-mail fiscal ajudam a direcionar a configuração depois da compra.",
+    fields: [
+      { name: "corporateName", label: "Razão social", placeholder: "Razão social da empresa", required: true, wide: true },
+      { name: "cnpj", label: "CNPJ emissor", placeholder: "00.000.000/0000-00", required: true, inputMode: "numeric" },
+      { name: "stateRegistration", label: "Inscrição estadual", placeholder: "Informe se houver", inputMode: "numeric" },
+      { name: "companyCity", label: "Cidade", placeholder: "Cidade", required: true },
+      { name: "companyState", label: "UF", placeholder: "UF", required: true, maxLength: 2 },
+      { name: "fiscalEmail", label: "E-mail fiscal", placeholder: "fiscal@empresa.com.br", required: true, type: "email", inputMode: "email", wide: true },
+      { name: "responsibleName", label: "Responsável pela validação", placeholder: "Nome completo", required: true, wide: true },
+      { name: "responsibleCpf", label: "CPF do responsável", placeholder: "000.000.000-00", required: true, inputMode: "numeric" },
+      { name: "responsibleBirthDate", label: "Nascimento do responsável", placeholder: "dd/mm/aaaa", required: true, type: "date" },
+      { name: "responsiblePhone", label: "Telefone/WhatsApp", placeholder: "(00) 00000-0000", required: true, inputMode: "tel" }
+    ]
+  }
+};
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -59,7 +127,7 @@ function isCertificateChoice(value: string | null): value is CertificateChoice {
 }
 
 function isDeviceChoice(value: string | null): value is DeviceChoice {
-  return value === "arquivo" || value === "smartcard" || value === "smartcard-leitora" || value === "token";
+  return value === "arquivo" || value === "smartcard" || value === "smartcard-leitora" || value === "token" || value === "nuvem";
 }
 
 function isValidationMethod(value: string | null): value is ValidationMethod {
@@ -83,6 +151,7 @@ function getProduct(certificate: CertificateChoice, device: DeviceChoice) {
 }
 
 export function Checkout() {
+  const router = useRouter();
   const params = useSearchParams();
   const certificateParam = params.get("certificate");
   const deviceParam = params.get("device");
@@ -93,9 +162,10 @@ export function Checkout() {
   const validation = isValidationMethod(validationParam) ? validationParam : "video";
   const requestedValidity = parseValidity(params.get("validity"));
 
+  const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>("details");
+  const [certificateData, setCertificateData] = useState<Record<string, string>>({});
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [includeAddon, setIncludeAddon] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("idle");
   const [copiedPix, setCopiedPix] = useState(false);
   const [cardData, setCardData] = useState({
     number: "",
@@ -108,16 +178,21 @@ export function Checkout() {
   const selectedDevice = deviceOptions.find(option => option.id === device) ?? deviceOptions[0];
   const selectedCertificate = certificateOptions.find(option => option.id === certificate) ?? certificateOptions[0];
   const selectedValidation = validationMethods.find(method => method.id === validation) ?? validationMethods[0];
+  const certificateForm = certificateForms[certificate];
   const validities = selectedProduct ? getAvailableValidities(selectedProduct) : [];
   const activeValidity = validities.includes(requestedValidity) ? requestedValidity : validities[0] ?? 12;
   const basePrice = selectedProduct?.pricesByValidity[activeValidity] ?? 0;
   const surcharge = selectedDevice.productType === "A3" ? selectedDevice.surcharge : 0;
   const certificateTotal = basePrice + surcharge;
   const firstCharge = certificateTotal + (includeAddon ? ADDON_MONTHLY_PRICE : 0);
-  const deliveryText =
-    selectedDevice.productType === "A1"
-      ? "Certificado A1 enviado por e-mail apos a validacao."
-      : "Token ou SmartCard preparado para envio pelos Correios.";
+  function updateCertificateData(name: string, value: string) {
+    setCertificateData(current => ({ ...current, [name]: value }));
+  }
+
+  function submitCertificateData(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCheckoutStep("payment");
+  }
 
   function fillFakeCard() {
     setCardData({
@@ -134,7 +209,19 @@ export function Checkout() {
   }
 
   function pay() {
-    setPaymentStatus("paid");
+    const confirmationParams = new URLSearchParams({
+      validation,
+      certificate,
+      device,
+      validity: String(activeValidity),
+      payment: paymentMethod
+    });
+
+    if (includeAddon) {
+      confirmationParams.set("addon", "saude");
+    }
+
+    router.push(`/confirmacao?${confirmationParams.toString()}`);
   }
 
   return (
@@ -151,13 +238,15 @@ export function Checkout() {
               Voltar para configuracao
             </Link>
             <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.2em] text-ocean">
-              Checkout
+              {checkoutStep === "details" ? "Dados do certificado" : "Checkout"}
             </p>
             <h1 className="mt-2 text-3xl font-black tracking-tight text-ink sm:text-4xl">
-              Finalize seu certificado digital
+              {checkoutStep === "details" ? "Informe os dados para emissao" : "Finalize seu certificado digital"}
             </h1>
             <p className="mt-3 text-base leading-7 text-slate-500">
-              Escolha a forma de pagamento, revise o pedido e acompanhe a preparacao apos a confirmacao.
+              {checkoutStep === "details"
+                ? "Antes do pagamento, confira os dados que serao usados para preparar a validacao do certificado."
+                : "Escolha a forma de pagamento, revise o pedido e acompanhe a preparacao apos a confirmacao."}
             </p>
           </div>
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-lime-100 bg-white px-4 py-2 text-sm font-extrabold text-ocean shadow-sm">
@@ -168,6 +257,68 @@ export function Checkout() {
 
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="rounded-3xl border border-lime-100 bg-white p-5 shadow-lift sm:p-7">
+            {checkoutStep === "details" ? (
+              <form onSubmit={submitCertificateData}>
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
+                      {certificateForm.eyebrow}
+                    </p>
+                    <h2 className="mt-1 text-2xl font-black text-ink">{certificateForm.title}</h2>
+                    <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">
+                      {certificateForm.description}
+                    </p>
+                  </div>
+                  <ShieldCheck className="shrink-0 text-ocean" size={22} aria-hidden="true" />
+                </div>
+
+                <div className="mt-6 rounded-3xl border border-slate-100 bg-slate-50/70 p-4 sm:p-5">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {certificateForm.fields.map(field => (
+                      <label
+                        key={field.name}
+                        className={`text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500 ${
+                          field.wide ? "sm:col-span-2" : ""
+                        }`}
+                      >
+                        {field.label}
+                        {field.required && <span className="text-trust"> *</span>}
+                        <input
+                          type={field.type ?? "text"}
+                          value={certificateData[field.name] ?? ""}
+                          onChange={event => updateCertificateData(field.name, event.target.value)}
+                          placeholder={field.placeholder}
+                          required={field.required}
+                          inputMode={field.inputMode}
+                          maxLength={field.maxLength}
+                          className="focus-ring mt-2 h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold normal-case tracking-normal text-slate-700 placeholder:text-slate-300"
+                        />
+                      </label>
+                    ))}
+                  </div>
+
+                  <p className="mt-5 rounded-2xl border border-lime-100 bg-white p-4 text-sm font-semibold leading-6 text-slate-600">
+                    {certificateForm.note}
+                  </p>
+                </div>
+
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                  <Link
+                    href="/#certificados"
+                    className="focus-ring inline-flex min-h-12 items-center justify-center rounded-2xl border border-lime-100 bg-white px-5 text-sm font-black text-ocean hover:bg-lime-50"
+                  >
+                    Voltar para configuracao
+                  </Link>
+                  <button
+                    type="submit"
+                    className="focus-ring inline-flex min-h-12 flex-1 items-center justify-center rounded-2xl bg-trust px-5 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_18px_35px_rgba(92,175,24,0.24)] hover:bg-[#4e9f16]"
+                  >
+                    Continuar para pagamento
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <>
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
@@ -187,10 +338,7 @@ export function Checkout() {
                   <button
                     key={option.id}
                     type="button"
-                    onClick={() => {
-                      setPaymentMethod(option.id);
-                      setPaymentStatus("idle");
-                    }}
+                    onClick={() => setPaymentMethod(option.id)}
                     className={`focus-ring rounded-2xl border p-4 text-left transition ${
                       active
                         ? "border-ocean bg-lime-50 shadow-[0_14px_30px_rgba(63,127,18,0.14)]"
@@ -345,29 +493,7 @@ export function Checkout() {
                 </div>
               )}
             </div>
-
-            {paymentStatus === "paid" && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-6 rounded-3xl border border-lime-200 bg-lime-50 p-5"
-              >
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="mt-0.5 shrink-0 text-trust" size={24} aria-hidden="true" />
-                  <div>
-                    <h3 className="text-xl font-black text-ink">Pagamento confirmado</h3>
-                    <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
-                      Pedido recebido. A validacao sera preparada e nossa equipe acompanha as proximas etapas.
-                    </p>
-                    <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                      <ProcessStep title="1. Pedido recebido" active />
-                      <ProcessStep title="2. Validacao em preparo" active />
-                      <ProcessStep title={selectedDevice.productType === "A1" ? "3. Envio por e-mail" : "3. Envio por Correios"} active />
-                    </div>
-                    <p className="mt-4 rounded-2xl bg-white p-3 text-sm font-bold text-ocean">{deliveryText}</p>
-                  </div>
-                </div>
-              </motion.div>
+              </>
             )}
           </div>
 
@@ -393,27 +519,39 @@ export function Checkout() {
               <SummaryRow label="Certificado" value={formatCurrency(basePrice)} />
               <SummaryRow label="Dispositivo" value={surcharge > 0 ? formatCurrency(surcharge) : "Incluso"} />
               <SummaryRow label="Validade" value={`${activeValidity} meses`} />
+              <SummaryRow label="Dados" value={checkoutStep === "details" ? "Pendente" : "Preenchidos"} />
             </div>
 
-            <label className="mt-4 block cursor-pointer rounded-3xl border border-lime-200 bg-[linear-gradient(135deg,rgba(126,208,56,0.18),rgba(255,255,255,0.95))] p-4 shadow-[0_16px_34px_rgba(92,175,24,0.12)]">
+            <label
+              className={`mt-4 block cursor-pointer rounded-3xl border-2 p-4 shadow-[0_18px_38px_rgba(92,175,24,0.18)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_46px_rgba(92,175,24,0.24)] ${
+                includeAddon
+                  ? "border-trust bg-[linear-gradient(135deg,rgba(126,208,56,0.28),rgba(255,255,255,0.96))]"
+                  : "border-lime-300 bg-[linear-gradient(135deg,rgba(126,208,56,0.2),rgba(255,255,255,0.94))]"
+              }`}
+            >
               <span className="flex items-start gap-3">
                 <input
                   type="checkbox"
                   checked={includeAddon}
                   onChange={event => setIncludeAddon(event.target.checked)}
-                  className="mt-1 h-5 w-5 accent-[#7ed038]"
+                  className="mt-1 h-6 w-6 shrink-0 accent-[#7ed038]"
                 />
-                <span>
-                  <span className="block text-[10px] font-extrabold uppercase tracking-[0.18em] text-trust">
+                <span className="min-w-0 flex-1">
+                  <span className="inline-flex whitespace-nowrap rounded-full bg-trust px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.1em] text-white">
                     Produto adicional
                   </span>
-                  <span className="mt-1 block text-lg font-black text-ink">Saude do seu negocio</span>
+                  <span className="mt-3 block text-xl font-black leading-tight text-ink">Saude do seu negocio</span>
                   <span className="mt-1 block text-sm font-semibold leading-6 text-slate-600">
                     Monitoramento mensal para acompanhar a reputacao e riscos do CNPJ.
                   </span>
-                  <span className="mt-3 inline-flex rounded-full bg-white px-3 py-1 text-sm font-black text-trust">
+                  <span className="mt-3 inline-flex rounded-full border border-lime-200 bg-white px-3 py-1.5 text-sm font-black text-trust shadow-sm">
                     + {formatCurrency(ADDON_MONTHLY_PRICE)}/mes
                   </span>
+                </span>
+                <span className={`mt-1 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${
+                  includeAddon ? "bg-trust text-white" : "bg-white text-trust"
+                }`}>
+                  {includeAddon ? "Selecionado" : "Adicionar"}
                 </span>
               </span>
             </label>
@@ -448,17 +586,5 @@ function SummaryRowDark({ label, value }: { label: string; value: string }) {
       <span className="font-semibold text-white/60">{label}</span>
       <span className="text-right font-black text-white">{value}</span>
     </p>
-  );
-}
-
-function ProcessStep({ title, active }: { title: string; active: boolean }) {
-  return (
-    <span
-      className={`rounded-2xl px-3 py-2 text-xs font-black ${
-        active ? "bg-white text-ocean" : "bg-slate-100 text-slate-400"
-      }`}
-    >
-      {title}
-    </span>
   );
 }
