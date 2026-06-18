@@ -23,7 +23,7 @@ const testimonials = [
     comment: "A comparação entre A1 e A3 ajuda muito no atendimento aos clientes que ainda estão em dúvida."
   },
   {
-    name: "Joao Ribeiro",
+    name: "João Ribeiro",
     role: "MEI",
     comment: "Ficou claro qual certificado eu precisava para emitir nota e manter a empresa em dia."
   },
@@ -131,7 +131,7 @@ export function SocialProof() {
                   whileHover={{ y: -2 }}
                   className="w-[280px] shrink-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:w-[320px] sm:p-6"
                 >
-                  <div className="flex gap-1 text-yellow-400" aria-label="Avaliacao 5 de 5">
+                  <div className="flex gap-1 text-yellow-400" aria-label="Avaliação 5 de 5">
                     {Array.from({ length: 5 }).map((_, starIndex) => (
                       <Star key={starIndex} size={17} fill="currentColor" aria-hidden="true" />
                     ))}

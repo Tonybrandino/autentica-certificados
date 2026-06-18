@@ -25,9 +25,9 @@ const channels = [
   {
     icon: Mail,
     label: "E-mail",
-    value: "contato@okay.com.br",
+    value: "contato@okaycertificado.com.br",
     detail: "Resposta em até 1 dia útil",
-    href: "mailto:contato@okay.com.br",
+    href: "mailto:contato@okaycertificado.com.br",
     color: "bg-lime-50 text-ocean"
   }
 ];

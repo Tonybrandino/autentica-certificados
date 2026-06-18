@@ -37,8 +37,8 @@ const pixCopyPaste =
 const boletoLine = "34191.79001 01043.510047 91020.150008 7 98120000000000";
 
 const certificateOptions = [
-  { id: "pf" as CertificateChoice, label: "Pessoa Fisica" },
-  { id: "pj" as CertificateChoice, label: "Pessoa Juridica" },
+  { id: "pf" as CertificateChoice, label: "Pessoa Física" },
+  { id: "pj" as CertificateChoice, label: "Pessoa Jurídica" },
   { id: "nfe" as CertificateChoice, label: "NF-e" }
 ];
 
@@ -51,7 +51,7 @@ const deviceOptions = [
 ];
 
 const paymentOptions = [
-  { id: "card" as PaymentMethod, label: "Cartao", helper: "Aprovacao imediata", icon: CreditCard },
+  { id: "card" as PaymentMethod, label: "Cartão", helper: "Aprovação imediata", icon: CreditCard },
   { id: "pix" as PaymentMethod, label: "Pix", helper: "QR Code e copia e cola", icon: Banknote },
   { id: "boleto" as PaymentMethod, label: "Boleto", helper: "Abrir e imprimir PDF", icon: Barcode }
 ];
@@ -235,18 +235,18 @@ export function Checkout() {
               className="focus-ring inline-flex items-center gap-2 rounded-full text-sm font-extrabold text-ocean hover:text-trust"
             >
               <ArrowLeft size={16} aria-hidden="true" />
-              Voltar para configuracao
+              Voltar para configuração
             </Link>
             <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.2em] text-ocean">
               {checkoutStep === "details" ? "Dados do certificado" : "Checkout"}
             </p>
             <h1 className="mt-2 text-3xl font-black tracking-tight text-ink sm:text-4xl">
-              {checkoutStep === "details" ? "Informe os dados para emissao" : "Finalize seu certificado digital"}
+              {checkoutStep === "details" ? "Informe os dados para emissão" : "Finalize seu certificado digital"}
             </h1>
             <p className="mt-3 text-base leading-7 text-slate-500">
               {checkoutStep === "details"
-                ? "Antes do pagamento, confira os dados que serao usados para preparar a validacao do certificado."
-                : "Escolha a forma de pagamento, revise o pedido e acompanhe a preparacao apos a confirmacao."}
+                ? "Antes do pagamento, confira os dados que serão usados para preparar a validação do certificado."
+                : "Escolha a forma de pagamento, revise o pedido e acompanhe a preparação após a confirmação."}
             </p>
           </div>
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-lime-100 bg-white px-4 py-2 text-sm font-extrabold text-ocean shadow-sm">
@@ -307,7 +307,7 @@ export function Checkout() {
                     href="/#certificados"
                     className="focus-ring inline-flex min-h-12 items-center justify-center rounded-2xl border border-lime-100 bg-white px-5 text-sm font-black text-ocean hover:bg-lime-50"
                   >
-                    Voltar para configuracao
+                    Voltar para configuração
                   </Link>
                   <button
                     type="submit"
@@ -364,7 +364,7 @@ export function Checkout() {
                 <div>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <label className="text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500">
-                      Numero do cartao
+                      Número do cartão
                       <input
                         value={cardData.number}
                         onChange={event => setCardData({ ...cardData, number: event.target.value })}
@@ -406,7 +406,7 @@ export function Checkout() {
                       onClick={fillFakeCard}
                       className="focus-ring inline-flex min-h-12 items-center justify-center rounded-2xl border border-lime-100 bg-white px-5 text-sm font-black text-ocean hover:bg-lime-50"
                     >
-                      Preencher cartao teste
+                      Preencher cartão teste
                     </button>
                     <button
                       type="button"
@@ -445,7 +445,7 @@ export function Checkout() {
                         onClick={copyPix}
                         className="focus-ring inline-flex min-h-12 items-center justify-center rounded-2xl border border-lime-100 bg-white px-5 text-sm font-black text-ocean hover:bg-lime-50"
                       >
-                        {copiedPix ? "Codigo copiado" : "Copiar codigo Pix"}
+                        {copiedPix ? "Código copiado" : "Copiar código Pix"}
                       </button>
                       <button
                         type="button"
@@ -461,7 +461,7 @@ export function Checkout() {
 
               {paymentMethod === "boleto" && (
                 <div>
-                  <p className="text-sm font-black text-ink">Linha digitavel</p>
+                  <p className="text-sm font-black text-ink">Linha digitável</p>
                   <div className="mt-2 rounded-2xl border border-slate-200 bg-white p-4 text-sm font-black text-slate-700">
                     {boletoLine}
                   </div>
@@ -511,7 +511,7 @@ export function Checkout() {
             <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
               <h2 className="text-xl font-black text-ink">{selectedProduct?.name ?? "Certificado Digital"}</h2>
               <p className="mt-1 text-sm font-semibold leading-6 text-slate-500">
-                {selectedCertificate.label} com {selectedDevice.label} e validacao por {selectedValidation.title}.
+                {selectedCertificate.label} com {selectedDevice.label} e validação por {selectedValidation.title}.
               </p>
             </div>
 
@@ -540,12 +540,12 @@ export function Checkout() {
                   <span className="inline-flex whitespace-nowrap rounded-full bg-trust px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.1em] text-white">
                     Produto adicional
                   </span>
-                  <span className="mt-3 block text-xl font-black leading-tight text-ink">Saude do seu negocio</span>
+                  <span className="mt-3 block text-xl font-black leading-tight text-ink">Saúde do seu negócio</span>
                   <span className="mt-1 block text-sm font-semibold leading-6 text-slate-600">
-                    Monitoramento mensal para acompanhar a reputacao e riscos do CNPJ.
+                    Monitoramento mensal para acompanhar a reputação e riscos do CNPJ.
                   </span>
                   <span className="mt-3 inline-flex rounded-full border border-lime-200 bg-white px-3 py-1.5 text-sm font-black text-trust shadow-sm">
-                    + {formatCurrency(ADDON_MONTHLY_PRICE)}/mes
+                    + {formatCurrency(ADDON_MONTHLY_PRICE)}/mês
                   </span>
                 </span>
                 <span className={`mt-1 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${

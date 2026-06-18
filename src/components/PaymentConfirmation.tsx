@@ -19,21 +19,21 @@ type DeviceChoice = "arquivo" | "smartcard" | "smartcard-leitora" | "token" | "n
 type PaymentMethod = "card" | "pix" | "boleto";
 
 const certificateOptions = [
-  { id: "pf" as CertificateChoice, label: "Pessoa Fisica" },
-  { id: "pj" as CertificateChoice, label: "Pessoa Juridica" },
+  { id: "pf" as CertificateChoice, label: "Pessoa Física" },
+  { id: "pj" as CertificateChoice, label: "Pessoa Jurídica" },
   { id: "nfe" as CertificateChoice, label: "NF-e" }
 ];
 
 const deviceOptions = [
   { id: "arquivo" as DeviceChoice, label: "Arquivo A1", productType: "A1" as const, surcharge: 0 },
-  { id: "smartcard" as DeviceChoice, label: "Cartao", productType: "A3" as const, surcharge: 70 },
-  { id: "smartcard-leitora" as DeviceChoice, label: "Cartao + Leitora", productType: "A3" as const, surcharge: 120 },
+  { id: "smartcard" as DeviceChoice, label: "Cartão", productType: "A3" as const, surcharge: 70 },
+  { id: "smartcard-leitora" as DeviceChoice, label: "Cartão + Leitora", productType: "A3" as const, surcharge: 120 },
   { id: "token" as DeviceChoice, label: "Token USB", productType: "A3" as const, surcharge: 90 },
   { id: "nuvem" as DeviceChoice, label: "Certificado em nuvem", productType: "Nuvem" as const, surcharge: 0 }
 ];
 
 const paymentLabels: Record<PaymentMethod, string> = {
-  card: "Cartao",
+  card: "Cartão",
   pix: "Pix",
   boleto: "Boleto"
 };
@@ -121,8 +121,8 @@ export function PaymentConfirmation() {
                     Agora siga pelo e-mail e WhatsApp cadastrados
                   </h1>
                   <p className="mt-4 text-base font-semibold leading-7 text-slate-600 sm:text-lg">
-                    Enviamos as instrucoes dos proximos passos para os contatos informados no cadastro do certificado.
-                    A validacao e a conclusao do pedido continuam por la.
+                    Enviamos as instruções dos próximos passos para os contatos informados no cadastro do certificado.
+                    A validação e a conclusão do pedido continuam por lá.
                   </p>
                 </div>
 
@@ -133,7 +133,7 @@ export function PaymentConfirmation() {
                     <SummaryRow label="Certificado" value={selectedCertificate.label} />
                     <SummaryRow label="Dispositivo" value={selectedDevice.label} />
                     <SummaryRow label="Validade" value={`${activeValidity} meses`} />
-                    <SummaryRow label="Validacao" value={selectedValidation.title} />
+                    <SummaryRow label="Validação" value={selectedValidation.title} />
                     <SummaryRow label="Pagamento" value={paymentLabels[payment]} />
                   </div>
                   <div className="mt-4 rounded-2xl bg-ink p-4 text-white">
@@ -148,17 +148,17 @@ export function PaymentConfirmation() {
               <InstructionCard
                 icon={Mail}
                 title="Confira seu e-mail"
-                text="Procure a mensagem com as orientacoes de validacao, documentos e acesso ao atendimento."
+                text="Procure a mensagem com as orientações de validação, documentos e acesso ao atendimento."
               />
               <InstructionCard
                 icon={MessageCircle}
                 title="Acompanhe pelo WhatsApp"
-                text="Nossa equipe tambem enviou o acompanhamento pelo WhatsApp cadastrado no pedido."
+                text="Nossa equipe também enviou o acompanhamento pelo WhatsApp cadastrado no pedido."
               />
               <InstructionCard
                 icon={ClipboardCheck}
-                title="Siga as instrucoes"
-                text="Continue pelos canais enviados para concluir a validacao e receber o certificado."
+                title="Siga as instruções"
+                text="Continue pelos canais enviados para concluir a validação e receber o certificado."
               />
             </div>
 
@@ -173,7 +173,7 @@ export function PaymentConfirmation() {
                   className="focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-lime-100 bg-white px-5 text-sm font-black text-ocean hover:bg-lime-50"
                 >
                   <Home size={16} aria-hidden="true" />
-                  Inicio
+                  Início
                 </Link>
                 <Link
                   href="/#certificados"

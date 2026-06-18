@@ -11,7 +11,7 @@ export default function ConfirmationPage() {
       <Suspense
         fallback={
           <section className="section-shell min-h-[60vh] pt-28">
-            <p className="text-sm font-bold text-slate-500">Carregando confirmacao...</p>
+            <p className="text-sm font-bold text-slate-500">Carregando confirmação...</p>
           </section>
         }
       >
