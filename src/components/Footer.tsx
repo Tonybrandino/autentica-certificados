@@ -3,7 +3,7 @@ const footerColumns = [
     heading: "Soluções",
     links: [
       { label: "Certificado Digital", href: "#certificados" },
-      { label: "Cashback OKAY", href: "#saude" },
+      { label: "Saúde do Seu Negócio", href: "/saude-do-seu-negocio" },
       { label: "Suporte", href: "#suporte" },
       { label: "Instalar Certificado", href: "#suporte" }
     ]

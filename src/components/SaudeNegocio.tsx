@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Activity, AlertTriangle, ArrowRight, Bell, Shield, TrendingUp } from "lucide-react";
+import Link from "next/link";
 
 const healthCards = [
   {
@@ -128,13 +129,13 @@ export function SaudeNegocio() {
               alertas para agir com mais segurança antes de tomar decisões comerciais.
             </p>
 
-            <a
-              href="#fale-conosco"
+            <Link
+              href="/saude-do-seu-negocio"
               className="focus-ring group mt-7 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-extrabold text-ocean shadow-[0_18px_50px_rgba(20,45,9,0.24)] smooth-ease hover:-translate-y-1 hover:bg-lime-50 hover:shadow-[0_24px_60px_rgba(20,45,9,0.34)]"
             >
               Conhecer o produto
               <ArrowRight size={16} className="transition group-hover:translate-x-1" aria-hidden="true" />
-            </a>
+            </Link>
 
             <div className="mt-8 max-w-[440px] rounded-[18px] border border-white/15 bg-[#081c06]/40 p-5 shadow-[0_16px_40px_rgba(10,25,5,0.35)] backdrop-blur-xl">
               <div className="flex items-center justify-between gap-3">
