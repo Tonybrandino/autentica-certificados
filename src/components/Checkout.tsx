@@ -71,12 +71,13 @@ const documentAttachmentField: CertificateField = {
 
 const certificatePasswordField: CertificateField = {
   name: "certificatePassword",
-  label: "Senha",
+  label: "Senha do certificado digital",
   type: "password",
-  placeholder: "Mínimo de 8 caracteres",
+  placeholder: "Crie uma senha com mínimo de 8 caracteres",
   required: true,
+  wide: true,
   minLength: 8,
-  helper: "A senha do certificado digital deve ter no mínimo 8 caracteres."
+  helper: "Esta será a senha usada para acessar e proteger o seu certificado digital. Use no mínimo 8 caracteres."
 };
 
 const certificateOptions = [
@@ -191,9 +192,11 @@ function getProduct(certificate: CertificateChoice, device: DeviceChoice) {
   );
 }
 
-function getCertificateFields(fields: CertificateField[]) {
+function getCertificateFields(fields: CertificateField[], validation: ValidationMethod) {
   const documentIndex = fields.findIndex(field => field.name === "rg");
-  const additionalFields = [documentAttachmentField, certificatePasswordField];
+  const additionalFields = validation === "video"
+    ? [documentAttachmentField, certificatePasswordField]
+    : [documentAttachmentField];
 
   if (documentIndex === -1) return [...fields, ...additionalFields];
 
@@ -234,8 +237,8 @@ export function Checkout() {
   const selectedValidation = validationMethods.find(method => method.id === validation) ?? validationMethods[0];
   const certificateForm = certificateForms[certificate];
   const certificateFields = useMemo(
-    () => getCertificateFields(certificateForm.fields),
-    [certificateForm.fields]
+    () => getCertificateFields(certificateForm.fields, validation),
+    [certificateForm.fields, validation]
   );
   const validities = selectedProduct ? getAvailableValidities(selectedProduct) : [];
   const activeValidity = validities.includes(requestedValidity) ? requestedValidity : validities[0] ?? 12;
@@ -382,16 +385,28 @@ export function Checkout() {
                       const hasMinLength = !minLength || value.length >= minLength;
                       const passwordProgress = minLength ? Math.min((value.length / minLength) * 100, 100) : 0;
                       const isFileField = field.type === "file";
+                      const isPasswordField = field.name === "certificatePassword";
 
                       return (
                         <label
                           key={field.name}
                           className={`text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500 ${
                             field.wide ? "sm:col-span-2" : ""
+                          } ${
+                            isPasswordField
+                              ? "rounded-2xl border-2 border-trust bg-lime-50/80 p-4 shadow-[0_16px_34px_rgba(92,175,24,0.16)]"
+                              : ""
                           }`}
                         >
-                          {field.label}
-                          {field.required && <span className="text-trust"> *</span>}
+                          <span className={isPasswordField ? "block text-[13px] text-ocean" : ""}>
+                            {field.label}
+                            {field.required && <span className="text-trust"> *</span>}
+                          </span>
+                          {isPasswordField && (
+                            <span className="mt-1 block text-sm font-bold normal-case leading-5 tracking-normal text-slate-700">
+                              Crie aqui a senha que será usada para o seu certificado digital por videoconferência.
+                            </span>
+                          )}
                           <input
                             type={field.type ?? "text"}
                             value={isFileField ? undefined : value}
@@ -409,7 +424,9 @@ export function Checkout() {
                             maxLength={field.maxLength}
                             minLength={field.minLength}
                             accept={field.accept}
-                            className="focus-ring mt-2 h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold normal-case tracking-normal text-slate-700 placeholder:text-slate-300"
+                            className={`focus-ring mt-2 h-12 w-full rounded-xl border bg-white px-3 text-sm font-bold normal-case tracking-normal text-slate-700 placeholder:text-slate-300 ${
+                              isPasswordField ? "border-lime-300 shadow-sm" : "border-slate-200"
+                            }`}
                           />
                           {field.helper && minLength > 0 && (
                             <span className="mt-2 block normal-case tracking-normal">
