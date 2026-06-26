@@ -407,27 +407,39 @@ export function Checkout() {
                               Crie aqui a senha que será usada para o seu certificado digital por videoconferência.
                             </span>
                           )}
-                          <input
-                            type={field.type ?? "text"}
-                            value={isFileField ? undefined : value}
-                            onChange={event => {
-                              if (isFileField) {
-                                updateCertificateData(field.name, event.target.files?.[0]?.name ?? "");
-                                return;
-                              }
-
-                              updateCertificateData(field.name, event.target.value);
-                            }}
-                            placeholder={field.placeholder}
-                            required={field.required}
-                            inputMode={field.inputMode}
-                            maxLength={field.maxLength}
-                            minLength={field.minLength}
-                            accept={field.accept}
-                            className={`focus-ring mt-2 h-12 w-full rounded-xl border bg-white px-3 text-sm font-bold normal-case tracking-normal text-slate-700 placeholder:text-slate-300 ${
-                              isPasswordField ? "border-lime-300 shadow-sm" : "border-slate-200"
-                            }`}
-                          />
+                          {isFileField ? (
+                            <>
+                              <input
+                                type="file"
+                                required={field.required}
+                                accept={field.accept}
+                                onChange={event => updateCertificateData(field.name, event.target.files?.[0]?.name ?? "")}
+                                className="sr-only"
+                              />
+                              <span className="focus-ring mt-2 flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-2 normal-case tracking-normal transition hover:border-lime-300 hover:bg-lime-50/50">
+                                <span className="inline-flex h-10 shrink-0 items-center justify-center rounded-lg bg-ocean px-4 text-sm font-black text-white">
+                                  Escolher arquivo
+                                </span>
+                                <span className={`min-w-0 truncate text-sm font-bold ${value ? "text-slate-700" : "text-slate-400"}`}>
+                                  {value || "Nenhum arquivo escolhido"}
+                                </span>
+                              </span>
+                            </>
+                          ) : (
+                            <input
+                              type={field.type ?? "text"}
+                              value={value}
+                              onChange={event => updateCertificateData(field.name, event.target.value)}
+                              placeholder={field.placeholder}
+                              required={field.required}
+                              inputMode={field.inputMode}
+                              maxLength={field.maxLength}
+                              minLength={field.minLength}
+                              className={`focus-ring mt-2 h-12 w-full rounded-xl border bg-white px-3 text-sm font-bold normal-case tracking-normal text-slate-700 placeholder:text-slate-300 ${
+                                isPasswordField ? "border-lime-300 shadow-sm" : "border-slate-200"
+                              }`}
+                            />
+                          )}
                           {field.helper && minLength > 0 && (
                             <span className="mt-2 block normal-case tracking-normal">
                               <span className="block h-1.5 overflow-hidden rounded-full bg-slate-200">
