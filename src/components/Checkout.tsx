@@ -14,7 +14,7 @@ import {
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { FormEvent } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type CertificateChoice = "pf" | "pj" | "nfe";
 type DeviceChoice = "arquivo" | "smartcard" | "smartcard-leitora" | "token" | "nuvem";
@@ -29,12 +29,55 @@ type CertificateField = {
   wide?: boolean;
   inputMode?: "text" | "email" | "tel" | "numeric";
   maxLength?: number;
+  minLength?: number;
+  helper?: string;
+  accept?: string;
 };
 
 const ADDON_MONTHLY_PRICE = 9.9;
 const pixCopyPaste =
   "00020126580014br.gov.bcb.pix0136checkout-okay-certificacao5204000053039865406123.455802BR5920OKAY CERTIFICACAO6009SAO PAULO62070503***6304A1B2";
 const boletoLine = "34191.79001 01043.510047 91020.150008 7 98120000000000";
+
+const identityField: CertificateField = {
+  name: "document",
+  label: "CPF ou CNPJ",
+  placeholder: "Digite o CPF ou CNPJ",
+  required: true,
+  inputMode: "numeric",
+  wide: true
+};
+
+const addressFields: CertificateField[] = [
+  { name: "zipCode", label: "CEP", placeholder: "00000-000", required: true, inputMode: "numeric" },
+  { name: "street", label: "Endereço", placeholder: "Preenchido pelo CEP", required: true },
+  { name: "number", label: "Número", placeholder: "Número", required: true },
+  { name: "complement", label: "Complemento", placeholder: "Opcional" },
+  { name: "district", label: "Bairro", placeholder: "Preenchido pelo CEP", required: true },
+  { name: "city", label: "Cidade", placeholder: "Preenchida pelo CEP", required: true },
+  { name: "state", label: "UF", placeholder: "UF", required: true, maxLength: 2 }
+];
+
+const documentAttachmentField: CertificateField = {
+  name: "documentAttachment",
+  label: "Anexar documento",
+  type: "file",
+  placeholder: "",
+  required: true,
+  wide: true,
+  accept: ".pdf,.jpg,.jpeg,.png",
+  helper: "Anexe RG, CNH ou outro documento oficial com foto."
+};
+
+const certificatePasswordField: CertificateField = {
+  name: "certificatePassword",
+  label: "Senha",
+  type: "password",
+  placeholder: "Mínimo de 8 caracteres",
+  required: true,
+  minLength: 8,
+  helper: "A senha do certificado digital deve ter no mínimo 8 caracteres."
+};
 
 const certificateOptions = [
   { id: "pf" as CertificateChoice, label: "Pessoa Física" },
@@ -67,49 +110,47 @@ const certificateForms: Record<CertificateChoice, {
     eyebrow: "Dados do titular",
     title: "Preencha os dados do e-CPF",
     description: "Use os dados do titular que fará a validação de identidade.",
-    note: "Nome, CPF, data de nascimento e e-mail são a base do cadastro ICP-Brasil para pessoa física. RG e telefone ajudam nossa equipe na conferência.",
+    note: "CPF ou CNPJ, nome, e-mail e endereço são a base do cadastro ICP-Brasil. RG e telefone ajudam nossa equipe na conferência.",
     fields: [
+      identityField,
       { name: "fullName", label: "Nome completo", placeholder: "Nome como consta no CPF", required: true, wide: true },
-      { name: "cpf", label: "CPF", placeholder: "000.000.000-00", required: true, inputMode: "numeric" },
-      { name: "birthDate", label: "Data de nascimento", placeholder: "dd/mm/aaaa", required: true, type: "date" },
       { name: "email", label: "E-mail do titular", placeholder: "nome@email.com", required: true, type: "email", inputMode: "email" },
       { name: "phone", label: "Telefone/WhatsApp", placeholder: "(00) 00000-0000", required: true, inputMode: "tel" },
-      { name: "rg", label: "RG ou CNH", placeholder: "Documento com foto", inputMode: "text" }
+      { name: "rg", label: "RG ou CNH", placeholder: "Documento com foto", inputMode: "text" },
+      ...addressFields
     ]
   },
   pj: {
     eyebrow: "Dados da empresa",
     title: "Preencha os dados do e-CNPJ",
     description: "Informe a empresa titular e o responsável legal perante o CNPJ.",
-    note: "Para pessoa jurídica, o certificado cruza CNPJ válido com os dados do responsável legal. Cidade e UF ajudam a preparar o cadastro da emissão.",
+    note: "Para pessoa jurídica, o certificado cruza CPF ou CNPJ válido com os dados do responsável legal. O CEP inicia o preenchimento do endereço.",
     fields: [
+      identityField,
       { name: "corporateName", label: "Razão social", placeholder: "Razão social da empresa", required: true, wide: true },
-      { name: "cnpj", label: "CNPJ", placeholder: "00.000.000/0000-00", required: true, inputMode: "numeric" },
-      { name: "companyCity", label: "Cidade da empresa", placeholder: "Cidade", required: true },
-      { name: "companyState", label: "UF", placeholder: "UF", required: true, maxLength: 2 },
       { name: "responsibleName", label: "Nome do responsável", placeholder: "Responsável perante o CNPJ", required: true, wide: true },
       { name: "responsibleCpf", label: "CPF do responsável", placeholder: "000.000.000-00", required: true, inputMode: "numeric" },
-      { name: "responsibleBirthDate", label: "Nascimento do responsável", placeholder: "dd/mm/aaaa", required: true, type: "date" },
       { name: "responsibleEmail", label: "E-mail do responsável", placeholder: "responsavel@email.com", required: true, type: "email", inputMode: "email" },
-      { name: "responsiblePhone", label: "Telefone/WhatsApp", placeholder: "(00) 00000-0000", required: true, inputMode: "tel" }
+      { name: "responsiblePhone", label: "Telefone/WhatsApp", placeholder: "(00) 00000-0000", required: true, inputMode: "tel" },
+      { name: "rg", label: "RG ou CNH", placeholder: "Documento com foto do responsável", inputMode: "text" },
+      ...addressFields
     ]
   },
   nfe: {
     eyebrow: "Dados fiscais",
     title: "Preencha os dados para NF-e",
     description: "Informe os dados da empresa emissora e do responsável pela validação.",
-    note: "NF-e usa certificado de pessoa jurídica para emissão fiscal. A inscrição estadual e o e-mail fiscal ajudam a direcionar a configuração depois da compra.",
+    note: "NF-e usa certificado de pessoa jurídica para emissão fiscal. O CEP inicia o preenchimento do endereço e ajuda a direcionar a configuração depois da compra.",
     fields: [
+      identityField,
       { name: "corporateName", label: "Razão social", placeholder: "Razão social da empresa", required: true, wide: true },
-      { name: "cnpj", label: "CNPJ emissor", placeholder: "00.000.000/0000-00", required: true, inputMode: "numeric" },
       { name: "stateRegistration", label: "Inscrição estadual", placeholder: "Informe se houver", inputMode: "numeric" },
-      { name: "companyCity", label: "Cidade", placeholder: "Cidade", required: true },
-      { name: "companyState", label: "UF", placeholder: "UF", required: true, maxLength: 2 },
       { name: "fiscalEmail", label: "E-mail fiscal", placeholder: "fiscal@empresa.com.br", required: true, type: "email", inputMode: "email", wide: true },
       { name: "responsibleName", label: "Responsável pela validação", placeholder: "Nome completo", required: true, wide: true },
       { name: "responsibleCpf", label: "CPF do responsável", placeholder: "000.000.000-00", required: true, inputMode: "numeric" },
-      { name: "responsibleBirthDate", label: "Nascimento do responsável", placeholder: "dd/mm/aaaa", required: true, type: "date" },
-      { name: "responsiblePhone", label: "Telefone/WhatsApp", placeholder: "(00) 00000-0000", required: true, inputMode: "tel" }
+      { name: "responsiblePhone", label: "Telefone/WhatsApp", placeholder: "(00) 00000-0000", required: true, inputMode: "tel" },
+      { name: "rg", label: "RG ou CNH", placeholder: "Documento com foto do responsável", inputMode: "text" },
+      ...addressFields
     ]
   }
 };
@@ -150,6 +191,19 @@ function getProduct(certificate: CertificateChoice, device: DeviceChoice) {
   );
 }
 
+function getCertificateFields(fields: CertificateField[]) {
+  const documentIndex = fields.findIndex(field => field.name === "rg");
+  const additionalFields = [documentAttachmentField, certificatePasswordField];
+
+  if (documentIndex === -1) return [...fields, ...additionalFields];
+
+  return [
+    ...fields.slice(0, documentIndex + 1),
+    ...additionalFields,
+    ...fields.slice(documentIndex + 1)
+  ];
+}
+
 export function Checkout() {
   const router = useRouter();
   const params = useSearchParams();
@@ -179,12 +233,60 @@ export function Checkout() {
   const selectedCertificate = certificateOptions.find(option => option.id === certificate) ?? certificateOptions[0];
   const selectedValidation = validationMethods.find(method => method.id === validation) ?? validationMethods[0];
   const certificateForm = certificateForms[certificate];
+  const certificateFields = useMemo(
+    () => getCertificateFields(certificateForm.fields),
+    [certificateForm.fields]
+  );
   const validities = selectedProduct ? getAvailableValidities(selectedProduct) : [];
   const activeValidity = validities.includes(requestedValidity) ? requestedValidity : validities[0] ?? 12;
   const basePrice = selectedProduct?.pricesByValidity[activeValidity] ?? 0;
   const surcharge = selectedDevice.productType === "A3" ? selectedDevice.surcharge : 0;
   const certificateTotal = basePrice + surcharge;
   const firstCharge = certificateTotal + (includeAddon ? ADDON_MONTHLY_PRICE : 0);
+
+  useEffect(() => {
+    const zipCode = certificateData.zipCode?.replace(/\D/g, "") ?? "";
+    if (zipCode.length !== 8) return;
+
+    let cancelled = false;
+
+    async function fillAddressByZipCode() {
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${zipCode}/json/`);
+        const data = await response.json() as {
+          erro?: boolean;
+          logradouro?: string;
+          bairro?: string;
+          localidade?: string;
+          uf?: string;
+        };
+
+        if (cancelled || data.erro) return;
+
+        setCertificateData(current => {
+          const currentZipCode = current.zipCode?.replace(/\D/g, "") ?? "";
+          if (currentZipCode !== zipCode) return current;
+
+          return {
+            ...current,
+            street: data.logradouro ?? current.street ?? "",
+            district: data.bairro ?? current.district ?? "",
+            city: data.localidade ?? current.city ?? "",
+            state: data.uf ?? current.state ?? ""
+          };
+        });
+      } catch {
+        // Mantem o preenchimento manual quando o CEP nao puder ser consultado.
+      }
+    }
+
+    void fillAddressByZipCode();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [certificateData.zipCode]);
+
   function updateCertificateData(name: string, value: string) {
     setCertificateData(current => ({ ...current, [name]: value }));
   }
@@ -274,27 +376,72 @@ export function Checkout() {
 
                 <div className="mt-6 rounded-3xl border border-slate-100 bg-slate-50/70 p-4 sm:p-5">
                   <div className="grid gap-4 sm:grid-cols-2">
-                    {certificateForm.fields.map(field => (
-                      <label
-                        key={field.name}
-                        className={`text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500 ${
-                          field.wide ? "sm:col-span-2" : ""
-                        }`}
-                      >
-                        {field.label}
-                        {field.required && <span className="text-trust"> *</span>}
-                        <input
-                          type={field.type ?? "text"}
-                          value={certificateData[field.name] ?? ""}
-                          onChange={event => updateCertificateData(field.name, event.target.value)}
-                          placeholder={field.placeholder}
-                          required={field.required}
-                          inputMode={field.inputMode}
-                          maxLength={field.maxLength}
-                          className="focus-ring mt-2 h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold normal-case tracking-normal text-slate-700 placeholder:text-slate-300"
-                        />
-                      </label>
-                    ))}
+                    {certificateFields.map(field => {
+                      const value = certificateData[field.name] ?? "";
+                      const minLength = field.minLength ?? 0;
+                      const hasMinLength = !minLength || value.length >= minLength;
+                      const passwordProgress = minLength ? Math.min((value.length / minLength) * 100, 100) : 0;
+                      const isFileField = field.type === "file";
+
+                      return (
+                        <label
+                          key={field.name}
+                          className={`text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500 ${
+                            field.wide ? "sm:col-span-2" : ""
+                          }`}
+                        >
+                          {field.label}
+                          {field.required && <span className="text-trust"> *</span>}
+                          <input
+                            type={field.type ?? "text"}
+                            value={isFileField ? undefined : value}
+                            onChange={event => {
+                              if (isFileField) {
+                                updateCertificateData(field.name, event.target.files?.[0]?.name ?? "");
+                                return;
+                              }
+
+                              updateCertificateData(field.name, event.target.value);
+                            }}
+                            placeholder={field.placeholder}
+                            required={field.required}
+                            inputMode={field.inputMode}
+                            maxLength={field.maxLength}
+                            minLength={field.minLength}
+                            accept={field.accept}
+                            className="focus-ring mt-2 h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold normal-case tracking-normal text-slate-700 placeholder:text-slate-300"
+                          />
+                          {field.helper && minLength > 0 && (
+                            <span className="mt-2 block normal-case tracking-normal">
+                              <span className="block h-1.5 overflow-hidden rounded-full bg-slate-200">
+                                <span
+                                  className={`block h-full rounded-full transition-all ${
+                                    hasMinLength ? "bg-trust" : "bg-amber-400"
+                                  }`}
+                                  style={{ width: `${passwordProgress}%` }}
+                                />
+                              </span>
+                              <span
+                                className={`mt-1 block text-[11px] font-bold ${
+                                  hasMinLength ? "text-trust" : "text-slate-500"
+                                }`}
+                              >
+                                {value
+                                  ? hasMinLength
+                                    ? "Senha com mínimo de 8 caracteres."
+                                    : `${value.length}/8 caracteres - mínimo de 8.`
+                                  : field.helper}
+                              </span>
+                            </span>
+                          )}
+                          {field.helper && !minLength && (
+                            <span className="mt-2 block text-[11px] font-bold normal-case tracking-normal text-slate-500">
+                              {isFileField && value ? `Arquivo selecionado: ${value}` : field.helper}
+                            </span>
+                          )}
+                        </label>
+                      );
+                    })}
                   </div>
 
                   <p className="mt-5 rounded-2xl border border-lime-100 bg-white p-4 text-sm font-semibold leading-6 text-slate-600">
