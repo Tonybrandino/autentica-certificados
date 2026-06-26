@@ -221,6 +221,7 @@ export function Checkout() {
 
   const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>("details");
   const [certificateData, setCertificateData] = useState<Record<string, string>>({});
+  const [certificateErrors, setCertificateErrors] = useState<Record<string, string>>({});
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [includeAddon, setIncludeAddon] = useState(false);
   const [copiedPix, setCopiedPix] = useState(false);
@@ -292,10 +293,39 @@ export function Checkout() {
 
   function updateCertificateData(name: string, value: string) {
     setCertificateData(current => ({ ...current, [name]: value }));
+    setCertificateErrors(current => {
+      if (!current[name]) return current;
+
+      const next = { ...current };
+      delete next[name];
+      return next;
+    });
+  }
+
+  function validateCertificateData() {
+    return certificateFields.reduce<Record<string, string>>((errors, field) => {
+      const value = certificateData[field.name]?.trim() ?? "";
+
+      if (field.required && !value) {
+        errors[field.name] = field.type === "file"
+          ? "Anexe o documento para continuar."
+          : "Preencha este campo para continuar.";
+      } else if (field.minLength && value.length < field.minLength) {
+        errors[field.name] = `Use pelo menos ${field.minLength} caracteres.`;
+      }
+
+      return errors;
+    }, {});
   }
 
   function submitCertificateData(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    const errors = validateCertificateData();
+    setCertificateErrors(errors);
+
+    if (Object.keys(errors).length > 0) return;
+
     setCheckoutStep("payment");
   }
 
@@ -363,7 +393,7 @@ export function Checkout() {
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="rounded-3xl border border-lime-100 bg-white p-5 shadow-lift sm:p-7">
             {checkoutStep === "details" ? (
-              <form onSubmit={submitCertificateData}>
+              <form onSubmit={submitCertificateData} noValidate>
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
@@ -386,6 +416,8 @@ export function Checkout() {
                       const passwordProgress = minLength ? Math.min((value.length / minLength) * 100, 100) : 0;
                       const isFileField = field.type === "file";
                       const isPasswordField = field.name === "certificatePassword";
+                      const error = certificateErrors[field.name];
+                      const hasError = Boolean(error);
 
                       return (
                         <label
@@ -394,7 +426,9 @@ export function Checkout() {
                             field.wide ? "sm:col-span-2" : ""
                           } ${
                             isPasswordField
-                              ? "rounded-2xl border-2 border-trust bg-lime-50/80 p-4 shadow-[0_16px_34px_rgba(92,175,24,0.16)]"
+                              ? `rounded-2xl border-2 p-4 shadow-[0_16px_34px_rgba(92,175,24,0.16)] ${
+                                  hasError ? "border-red-400 bg-red-50/70" : "border-trust bg-lime-50/80"
+                                }`
                               : ""
                           }`}
                         >
@@ -411,12 +445,16 @@ export function Checkout() {
                             <>
                               <input
                                 type="file"
-                                required={field.required}
                                 accept={field.accept}
+                                aria-invalid={hasError}
                                 onChange={event => updateCertificateData(field.name, event.target.files?.[0]?.name ?? "")}
                                 className="sr-only"
                               />
-                              <span className="focus-ring mt-2 flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-2 normal-case tracking-normal transition hover:border-lime-300 hover:bg-lime-50/50">
+                              <span
+                                className={`focus-ring mt-2 flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border bg-white p-2 normal-case tracking-normal transition hover:border-lime-300 hover:bg-lime-50/50 ${
+                                  hasError ? "border-red-400 bg-red-50/40" : "border-slate-200"
+                                }`}
+                              >
                                 <span className="inline-flex h-10 shrink-0 items-center justify-center rounded-lg bg-ocean px-4 text-sm font-black text-white">
                                   Escolher arquivo
                                 </span>
@@ -431,12 +469,12 @@ export function Checkout() {
                               value={value}
                               onChange={event => updateCertificateData(field.name, event.target.value)}
                               placeholder={field.placeholder}
-                              required={field.required}
                               inputMode={field.inputMode}
                               maxLength={field.maxLength}
                               minLength={field.minLength}
+                              aria-invalid={hasError}
                               className={`focus-ring mt-2 h-12 w-full rounded-xl border bg-white px-3 text-sm font-bold normal-case tracking-normal text-slate-700 placeholder:text-slate-300 ${
-                                isPasswordField ? "border-lime-300 shadow-sm" : "border-slate-200"
+                                hasError ? "border-red-400 bg-red-50/40" : isPasswordField ? "border-lime-300 shadow-sm" : "border-slate-200"
                               }`}
                             />
                           )}
@@ -466,6 +504,11 @@ export function Checkout() {
                           {field.helper && !minLength && (
                             <span className="mt-2 block text-[11px] font-bold normal-case tracking-normal text-slate-500">
                               {isFileField && value ? `Arquivo selecionado: ${value}` : field.helper}
+                            </span>
+                          )}
+                          {hasError && (
+                            <span className="mt-2 block text-[11px] font-extrabold normal-case tracking-normal text-red-600">
+                              {error}
                             </span>
                           )}
                         </label>
