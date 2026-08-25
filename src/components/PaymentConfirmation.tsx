@@ -1,16 +1,22 @@
 "use client";
 
+import { SchedulingPanel } from "@/components/scheduling/SchedulingPanel";
 import type { CertificateProduct, ValidationMethod, ValidityStep } from "@/data/products";
 import { products, validationMethods } from "@/data/products";
 import {
   ArrowRight,
+  CalendarClock,
   CheckCircle2,
-  ClipboardCheck,
+  FileCheck2,
   Home,
+  KeyRound,
   Mail,
+  MapPin,
   MessageCircle,
-  ShieldCheck
+  ShieldCheck,
+  Zap
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -19,9 +25,9 @@ type DeviceChoice = "arquivo" | "smartcard" | "smartcard-leitora" | "token" | "n
 type PaymentMethod = "card" | "pix" | "boleto";
 
 const certificateOptions = [
-  { id: "pf" as CertificateChoice, label: "Pessoa Física" },
-  { id: "pj" as CertificateChoice, label: "Pessoa Jurídica" },
-  { id: "nfe" as CertificateChoice, label: "NF-e" }
+  { id: "pf" as CertificateChoice, label: "Pessoa Física", code: "CPF" },
+  { id: "pj" as CertificateChoice, label: "Pessoa Jurídica", code: "CNPJ" },
+  { id: "nfe" as CertificateChoice, label: "NF-e", code: "NF-e" }
 ];
 
 const deviceOptions = [
@@ -36,6 +42,85 @@ const paymentLabels: Record<PaymentMethod, string> = {
   card: "Cartão",
   pix: "Pix",
   boleto: "Boleto"
+};
+
+type ConfirmationCopy = {
+  title: string;
+  description: string;
+  nextStep: string;
+  cards: Array<{ icon: LucideIcon; title: string; text: string }>;
+};
+
+const confirmationCopy: Record<ValidationMethod, ConfirmationCopy> = {
+  video: {
+    title: "Pagamento confirmado. Agora agende sua videoconferência",
+    description:
+      "A senha do certificado já foi criada no checkout. Falta apenas escolher a data e o horário da validação de identidade por vídeo.",
+    nextStep: "Agendar videoconferência",
+    cards: [
+      {
+        icon: CalendarClock,
+        title: "Escolha data e horário",
+        text: "A agenda abaixo mostra os horários livres com validação online em tempo real."
+      },
+      {
+        icon: KeyRound,
+        title: "Senha já definida",
+        text: "Guarde a senha criada no checkout: ela será usada na emissão e não pode ser recuperada."
+      },
+      {
+        icon: Mail,
+        title: "Link por e-mail e WhatsApp",
+        text: "Depois de agendar, enviamos o link da sala e o passo a passo para os contatos do pedido."
+      }
+    ]
+  },
+  presencial: {
+    title: "Pagamento confirmado. Agora agende seu atendimento presencial",
+    description:
+      "Escolha o posto de atendimento, a data e o horário da validação. Anexe os documentos para agilizar a conferência no balcão.",
+    nextStep: "Agendar atendimento presencial",
+    cards: [
+      {
+        icon: MapPin,
+        title: "Escolha o posto",
+        text: "Selecione a unidade mais próxima e confira o endereço completo antes de confirmar."
+      },
+      {
+        icon: FileCheck2,
+        title: "Leve os originais",
+        text: "Os anexos agilizam a análise, mas os documentos originais são obrigatórios no atendimento."
+      },
+      {
+        icon: Mail,
+        title: "Comprovante por e-mail",
+        text: "Você recebe o comprovante do agendamento e as orientações nos contatos do pedido."
+      }
+    ]
+  },
+  renovacao: {
+    title: "Pagamento confirmado. Emissão automática liberada",
+    description:
+      "Sua emissão não precisa de agendamento: ela é concluída no ambiente da autoridade certificadora com o certificado anterior ainda válido.",
+    nextStep: "Ir para a emissão online",
+    cards: [
+      {
+        icon: Zap,
+        title: "Sem agendamento",
+        text: "A validação é feita na hora, direto no ambiente de emissão online."
+      },
+      {
+        icon: ShieldCheck,
+        title: "Validação pelo certificado atual",
+        text: "Tenha em mãos o certificado anterior válido e a senha dele para autenticar."
+      },
+      {
+        icon: MessageCircle,
+        title: "Suporte no WhatsApp",
+        text: "Se algo falhar na emissão, nossa equipe acompanha pelo WhatsApp cadastrado."
+      }
+    ]
+  }
 };
 
 function formatCurrency(value: number) {
@@ -101,12 +186,14 @@ export function PaymentConfirmation() {
   const surcharge = selectedDevice.productType === "A3" ? selectedDevice.surcharge : 0;
   const certificateTotal = basePrice + surcharge;
   const firstCharge = certificateTotal + (includeAddon ? 9.9 : 0);
+  const copy = confirmationCopy[validation];
+  const productCode = `${selectedCertificate.code} ${selectedDevice.productType}`;
 
   return (
     <section className="relative bg-[linear-gradient(180deg,#f9fdf5_0%,#eef8e8_48%,#ffffff_100%)] pt-28 pb-16 sm:pb-20">
       <div className="absolute inset-x-0 top-20 h-px bg-gradient-to-r from-transparent via-lime-200 to-transparent" aria-hidden="true" />
       <div className="section-shell">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-5xl space-y-5">
           <div className="overflow-hidden rounded-3xl border-2 border-lime-200 bg-white shadow-[0_24px_70px_rgba(63,127,18,0.14)]">
             <div className="bg-[linear-gradient(135deg,rgba(126,208,56,0.28),rgba(255,255,255,0.96))] p-6 sm:p-8 lg:p-10">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -117,13 +204,15 @@ export function PaymentConfirmation() {
                   <p className="mt-6 text-xs font-extrabold uppercase tracking-[0.2em] text-ocean">
                     Pagamento confirmado
                   </p>
-                  <h1 className="mt-2 text-3xl font-black tracking-tight text-ink sm:text-5xl">
-                    Agora siga pelo e-mail e WhatsApp cadastrados
-                  </h1>
-                  <p className="mt-4 text-base font-semibold leading-7 text-slate-600 sm:text-lg">
-                    Enviamos as instruções dos próximos passos para os contatos informados no cadastro do certificado.
-                    A validação e a conclusão do pedido continuam por lá.
-                  </p>
+                  <h1 className="mt-2 text-3xl font-black tracking-tight text-ink sm:text-5xl">{copy.title}</h1>
+                  <p className="mt-4 text-base font-semibold leading-7 text-slate-600 sm:text-lg">{copy.description}</p>
+                  <a
+                    href="#agendamento"
+                    className="focus-ring mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-ink px-5 text-sm font-black uppercase tracking-[0.08em] text-white hover:bg-slate-800"
+                  >
+                    {copy.nextStep}
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </a>
                 </div>
 
                 <div className="rounded-3xl border border-lime-100 bg-white/85 p-4 shadow-sm lg:w-80">
@@ -143,23 +232,22 @@ export function PaymentConfirmation() {
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="grid gap-4 p-6 sm:p-8 lg:grid-cols-3 lg:p-10">
-              <InstructionCard
-                icon={Mail}
-                title="Confira seu e-mail"
-                text="Procure a mensagem com as orientações de validação, documentos e acesso ao atendimento."
-              />
-              <InstructionCard
-                icon={MessageCircle}
-                title="Acompanhe pelo WhatsApp"
-                text="Nossa equipe também enviou o acompanhamento pelo WhatsApp cadastrado no pedido."
-              />
-              <InstructionCard
-                icon={ClipboardCheck}
-                title="Siga as instruções"
-                text="Continue pelos canais enviados para concluir a validação e receber o certificado."
-              />
+          <div id="agendamento" className="scroll-mt-28">
+            <SchedulingPanel
+              validation={validation}
+              productName={selectedProduct?.name ?? "Certificado Digital"}
+              productCode={productCode}
+              seed={`${certificate}-${device}-${validation}-${activeValidity}-${payment}`}
+            />
+          </div>
+
+          <div className="overflow-hidden rounded-3xl border border-lime-100 bg-white shadow-[0_24px_70px_rgba(63,127,18,0.1)]">
+            <div className="grid gap-4 p-6 sm:p-8 lg:grid-cols-3">
+              {copy.cards.map(card => (
+                <InstructionCard key={card.title} icon={card.icon} title={card.title} text={card.text} />
+              ))}
             </div>
 
             <div className="flex flex-col gap-3 border-t border-lime-100 bg-slate-50/70 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
@@ -191,7 +279,7 @@ export function PaymentConfirmation() {
   );
 }
 
-function InstructionCard({ icon: Icon, title, text }: { icon: typeof Mail; title: string; text: string }) {
+function InstructionCard({ icon: Icon, title, text }: { icon: LucideIcon; title: string; text: string }) {
   return (
     <div className="rounded-3xl border border-lime-100 bg-white p-5 shadow-sm">
       <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lime-50 text-trust">

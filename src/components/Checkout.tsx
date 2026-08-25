@@ -2,7 +2,10 @@
 
 import type { CertificateProduct, ValidationMethod, ValidityStep } from "@/data/products";
 import { products, validationMethods } from "@/data/products";
+import type { OrderDraft } from "@/data/scheduling";
+import { ORDER_DRAFT_STORAGE_KEY } from "@/data/scheduling";
 import {
+  AlertTriangle,
   ArrowLeft,
   BadgeCheck,
   Banknote,
@@ -85,6 +88,12 @@ const certificateOptions = [
   { id: "pj" as CertificateChoice, label: "Pessoa Jurídica" },
   { id: "nfe" as CertificateChoice, label: "NF-e" }
 ];
+
+const certificateCodes: Record<CertificateChoice, string> = {
+  pf: "CPF",
+  pj: "CNPJ",
+  nfe: "NF-e"
+};
 
 const deviceOptions = [
   { id: "arquivo" as DeviceChoice, label: "Arquivo A1", productType: "A1" as const, surcharge: 0 },
@@ -192,6 +201,23 @@ function getProduct(certificate: CertificateChoice, device: DeviceChoice) {
   );
 }
 
+/** Aponta o que ainda falta para a emissao, sem impedir o avanco do checkout. */
+function collectCertificateIssues(fields: CertificateField[], data: Record<string, string>) {
+  return fields.reduce<Record<string, string>>((issues, field) => {
+    const value = data[field.name]?.trim() ?? "";
+
+    if (field.required && !value) {
+      issues[field.name] = field.type === "file"
+        ? "Anexe o documento antes da emissão."
+        : "Campo obrigatório para a emissão.";
+    } else if (field.minLength && value.length < field.minLength) {
+      issues[field.name] = `Use pelo menos ${field.minLength} caracteres.`;
+    }
+
+    return issues;
+  }, {});
+}
+
 function getCertificateFields(fields: CertificateField[], validation: ValidationMethod) {
   const documentIndex = fields.findIndex(field => field.name === "rg");
   const additionalFields = validation === "video"
@@ -241,6 +267,11 @@ export function Checkout() {
     () => getCertificateFields(certificateForm.fields, validation),
     [certificateForm.fields, validation]
   );
+  const certificateIssues = useMemo(
+    () => collectCertificateIssues(certificateFields, certificateData),
+    [certificateData, certificateFields]
+  );
+  const pendingCount = Object.keys(certificateIssues).length;
   const validities = selectedProduct ? getAvailableValidities(selectedProduct) : [];
   const activeValidity = validities.includes(requestedValidity) ? requestedValidity : validities[0] ?? 12;
   const basePrice = selectedProduct?.pricesByValidity[activeValidity] ?? 0;
@@ -302,30 +333,14 @@ export function Checkout() {
     });
   }
 
-  function validateCertificateData() {
-    return certificateFields.reduce<Record<string, string>>((errors, field) => {
-      const value = certificateData[field.name]?.trim() ?? "";
-
-      if (field.required && !value) {
-        errors[field.name] = field.type === "file"
-          ? "Anexe o documento para continuar."
-          : "Preencha este campo para continuar.";
-      } else if (field.minLength && value.length < field.minLength) {
-        errors[field.name] = `Use pelo menos ${field.minLength} caracteres.`;
-      }
-
-      return errors;
-    }, {});
-  }
-
+  /**
+   * Os campos pendentes sao apenas sinalizados: o cliente segue para o pagamento
+   * e pode voltar para completar os dados antes da emissao.
+   */
   function submitCertificateData(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const errors = validateCertificateData();
-    setCertificateErrors(errors);
-
-    if (Object.keys(errors).length > 0) return;
-
+    setCertificateErrors(certificateIssues);
     setCheckoutStep("payment");
   }
 
@@ -343,7 +358,38 @@ export function Checkout() {
     setCopiedPix(true);
   }
 
+  /**
+   * Os dados do titular seguem pela sessao do navegador, nunca pela URL,
+   * para que a tela de agendamento monte o cabecalho do atendimento.
+   */
+  function saveOrderDraft() {
+    const draft: OrderDraft = {
+      orderNumber: String(700000 + Math.floor(Math.random() * 99999)),
+      createdAt: new Date().toISOString(),
+      holderName: (
+        certificateData.fullName ||
+        certificateData.corporateName ||
+        certificateData.responsibleName ||
+        "Titular do pedido"
+      ).trim(),
+      document: certificateData.document?.trim() ?? "",
+      productName: selectedProduct?.name ?? "Certificado Digital",
+      productCode: `${certificateCodes[certificate]} ${selectedDevice.productType}`,
+      validation,
+      email: (certificateData.email || certificateData.responsibleEmail || certificateData.fiscalEmail || "").trim(),
+      phone: (certificateData.phone || certificateData.responsiblePhone || "").trim()
+    };
+
+    try {
+      window.sessionStorage.setItem(ORDER_DRAFT_STORAGE_KEY, JSON.stringify(draft));
+    } catch {
+      // Segue o fluxo mesmo sem armazenamento disponivel no navegador.
+    }
+  }
+
   function pay() {
+    saveOrderDraft();
+
     const confirmationParams = new URLSearchParams({
       validation,
       certificate,
@@ -545,8 +591,30 @@ export function Checkout() {
                 </p>
                 <h2 className="mt-1 text-2xl font-black text-ink">Como prefere pagar?</h2>
               </div>
-              <ShieldCheck className="text-ocean" size={22} aria-hidden="true" />
+              <div className="flex shrink-0 items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setCheckoutStep("details")}
+                  className="focus-ring inline-flex min-h-10 items-center gap-2 rounded-2xl border border-lime-100 bg-white px-4 text-sm font-black text-ocean hover:bg-lime-50"
+                >
+                  <ArrowLeft size={15} aria-hidden="true" />
+                  Editar dados
+                </button>
+                <ShieldCheck className="text-ocean" size={22} aria-hidden="true" />
+              </div>
             </div>
+
+            {pendingCount > 0 && (
+              <p className="mt-5 flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold leading-6 text-amber-800">
+                <AlertTriangle size={16} className="mt-0.5 shrink-0" aria-hidden="true" />
+                <span>
+                  {pendingCount === 1
+                    ? "1 dado do certificado ainda está pendente."
+                    : `${pendingCount} dados do certificado ainda estão pendentes.`}{" "}
+                  Você pode pagar agora e completar depois — a emissão só é liberada com o cadastro completo.
+                </span>
+              </p>
+            )}
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {paymentOptions.map(option => {
@@ -738,7 +806,10 @@ export function Checkout() {
               <SummaryRow label="Certificado" value={formatCurrency(basePrice)} />
               <SummaryRow label="Dispositivo" value={surcharge > 0 ? formatCurrency(surcharge) : "Incluso"} />
               <SummaryRow label="Validade" value={`${activeValidity} meses`} />
-              <SummaryRow label="Dados" value={checkoutStep === "details" ? "Pendente" : "Preenchidos"} />
+              <SummaryRow
+                label="Dados"
+                value={pendingCount === 0 ? "Preenchidos" : `${pendingCount} pendente${pendingCount > 1 ? "s" : ""}`}
+              />
             </div>
 
             <label
