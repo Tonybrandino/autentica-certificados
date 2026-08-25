@@ -2,12 +2,9 @@
 
 import type { OrderDraft } from "@/data/scheduling";
 import { AUTOMATIC_ISSUANCE_URL } from "@/data/scheduling";
-import { ExternalLink, PauseCircle, ShieldCheck, Zap } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ExternalLink, ShieldCheck, Zap } from "lucide-react";
 
 import { OrderDataItem, SectionHeading, formatSaleDate } from "./SchedulingFields";
-
-const REDIRECT_SECONDS = 10;
 
 const steps = [
   "Confirme seus dados no ambiente da autoridade certificadora.",
@@ -16,23 +13,6 @@ const steps = [
 ];
 
 export function AutomaticIssuance({ order }: { order: OrderDraft }) {
-  const [secondsLeft, setSecondsLeft] = useState(REDIRECT_SECONDS);
-  const [autoRedirect, setAutoRedirect] = useState(true);
-
-  useEffect(() => {
-    if (!autoRedirect) return;
-
-    if (secondsLeft <= 0) {
-      window.location.assign(AUTOMATIC_ISSUANCE_URL);
-      return;
-    }
-
-    const timer = window.setTimeout(() => setSecondsLeft(current => current - 1), 1000);
-    return () => window.clearTimeout(timer);
-  }, [autoRedirect, secondsLeft]);
-
-  const progress = ((REDIRECT_SECONDS - secondsLeft) / REDIRECT_SECONDS) * 100;
-
   return (
     <div>
       <SectionHeading
@@ -57,44 +37,20 @@ export function AutomaticIssuance({ order }: { order: OrderDraft }) {
           <Zap size={22} strokeWidth={2.4} aria-hidden="true" />
         </span>
 
-        <h3 className="mt-4 text-xl font-black text-ink">
-          {autoRedirect
-            ? `Você será redirecionado em ${secondsLeft}s`
-            : "Redirecionamento pausado"}
-        </h3>
+        <h3 className="mt-4 text-xl font-black text-ink">Conclua sua emissão online</h3>
         <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
-          {autoRedirect
-            ? "Estamos abrindo o ambiente de emissão online para concluir seu certificado agora mesmo."
-            : "Quando quiser continuar, abra o ambiente de emissão online pelo botão abaixo."}
+          Quando estiver com o certificado anterior em mãos, abra o ambiente de emissão da autoridade certificadora pelo
+          botão abaixo.
         </p>
 
-        {autoRedirect && (
-          <span className="mt-4 block h-1.5 overflow-hidden rounded-full bg-white" aria-hidden="true">
-            <span
-              className="block h-full rounded-full bg-trust transition-all duration-1000 ease-linear"
-              style={{ width: `${progress}%` }}
-            />
-          </span>
-        )}
-
-        <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-5">
           <a
             href={AUTOMATIC_ISSUANCE_URL}
-            className="focus-ring inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-trust px-5 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_18px_35px_rgba(92,175,24,0.24)] hover:bg-[#4e9f16]"
+            className="focus-ring inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-trust px-5 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_18px_35px_rgba(92,175,24,0.24)] hover:bg-[#4e9f16] sm:w-auto"
           >
             Ir para a emissão online
             <ExternalLink size={16} aria-hidden="true" />
           </a>
-          {autoRedirect && (
-            <button
-              type="button"
-              onClick={() => setAutoRedirect(false)}
-              className="focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-lime-100 bg-white px-5 text-sm font-black text-ocean hover:bg-lime-50"
-            >
-              <PauseCircle size={16} aria-hidden="true" />
-              Cancelar redirecionamento
-            </button>
-          )}
         </div>
 
         <p className="mt-4 break-all text-[11px] font-bold text-slate-500">{AUTOMATIC_ISSUANCE_URL}</p>
@@ -114,8 +70,7 @@ export function AutomaticIssuance({ order }: { order: OrderDraft }) {
         </ol>
         <p className="mt-4 inline-flex items-start gap-2 rounded-2xl border border-lime-100 bg-white p-3 text-[13px] font-bold leading-5 text-slate-600">
           <ShieldCheck size={15} className="mt-0.5 shrink-0 text-ocean" aria-hidden="true" />
-          Se a validação automática não for concluída, nossa equipe entra em contato para reagendar por videoconferência
-          sem custo adicional.
+          Em casos de dúvidas, acione nossa Central de Atendimento.
         </p>
       </div>
     </div>
