@@ -7,7 +7,7 @@ import {
   isSlotInPast,
   isSlotTaken
 } from "@/data/scheduling";
-import { CalendarDays, Clock, Lock, Paperclip } from "lucide-react";
+import { CalendarDays, Clock, Lock } from "lucide-react";
 
 export const fieldLabelClass = "text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500";
 export const controlClass =
@@ -51,57 +51,6 @@ export function FieldError({ message }: { message?: string }) {
 
   return (
     <span className="mt-2 block text-[11px] font-extrabold normal-case tracking-normal text-red-600">{message}</span>
-  );
-}
-
-export function FileField({
-  label,
-  helper,
-  value,
-  required,
-  error,
-  onChange
-}: {
-  label: string;
-  helper: string;
-  value: string;
-  required?: boolean;
-  error?: string;
-  onChange: (fileName: string) => void;
-}) {
-  const hasError = Boolean(error);
-
-  return (
-    <label className={fieldLabelClass}>
-      <span>
-        {label}
-        {required && <span className="text-trust"> *</span>}
-      </span>
-      <input
-        type="file"
-        accept=".pdf,.jpg,.jpeg,.png"
-        aria-invalid={hasError}
-        onChange={event => onChange(event.target.files?.[0]?.name ?? "")}
-        className="sr-only"
-      />
-      <span
-        className={`focus-ring mt-2 flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border bg-white p-2 normal-case tracking-normal transition hover:border-lime-300 hover:bg-lime-50/50 ${
-          hasError ? "border-red-400 bg-red-50/40" : "border-slate-200"
-        }`}
-      >
-        <span className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-ocean px-3 text-sm font-black text-white">
-          <Paperclip size={14} aria-hidden="true" />
-          Anexar
-        </span>
-        <span className={`min-w-0 truncate text-sm font-bold ${value ? "text-slate-700" : "text-slate-400"}`}>
-          {value || "Nenhum arquivo escolhido"}
-        </span>
-      </span>
-      <span className="mt-2 block text-[11px] font-bold normal-case tracking-normal text-slate-500">
-        {value ? `Arquivo selecionado: ${value}` : helper}
-      </span>
-      <FieldError message={error} />
-    </label>
   );
 }
 
@@ -189,12 +138,7 @@ export function TimeSlotGrid({
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className={fieldLabelClass}>Selecione um horário</p>
-        <span className="text-[11px] font-bold text-slate-500">
-          {available.length > 0 ? `${available.length} horários livres` : "Sem horários livres"}
-        </span>
-      </div>
+      <p className={fieldLabelClass}>Selecione um horário</p>
 
       {available.length === 0 ? (
         <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold leading-6 text-amber-800">

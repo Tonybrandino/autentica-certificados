@@ -8,7 +8,7 @@ import { OrderDataItem, SectionHeading, formatSaleDate } from "./SchedulingField
 
 const steps = [
   "Confirme seus dados no ambiente da autoridade certificadora.",
-  "Autentique-se com o certificado anterior ainda válido.",
+  "Valide automaticamente com o certificado digital A3 ou Nuvem ainda válido.",
   "Baixe ou instale o novo certificado na mesma sessão."
 ];
 

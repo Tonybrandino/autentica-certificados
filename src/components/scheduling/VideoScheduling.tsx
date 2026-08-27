@@ -35,7 +35,7 @@ function Stepper() {
           </p>
         </div>
         <div className="text-right">
-          <p className="text-sm font-black text-ink">Atendimento</p>
+          <p className="text-sm font-black text-ink">Agendamento</p>
           <p className="mt-1 text-[11px] font-extrabold uppercase tracking-[0.1em] text-ocean">Etapa atual</p>
         </div>
       </div>
@@ -95,6 +95,12 @@ export function VideoScheduling({ order, now }: { order: OrderDraft; now: Date }
         note={`O link da sala será enviado para ${order.email || "o e-mail cadastrado"} e para o WhatsApp do pedido. Entre com alguns minutos de antecedência.`}
         onEdit={() => setConfirmed(false)}
       >
+        <div className="mt-3 grid gap-4 rounded-2xl border border-lime-100 bg-white p-4 sm:grid-cols-3">
+          <OrderDataItem label="Nome/Razão" value={order.holderName} />
+          <OrderDataItem label="Pedido" value={order.orderNumber} />
+          <OrderDataItem label="Tipo" value={order.productCode} />
+        </div>
+
         <div className="mt-3 rounded-2xl border border-lime-100 bg-white p-4">
           <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">Leve para a chamada</p>
           <ul className="mt-2 space-y-2">
@@ -136,7 +142,7 @@ export function VideoScheduling({ order, now }: { order: OrderDraft; now: Date }
           <div className="rounded-3xl border border-lime-100 bg-lime-50/70 p-4">
             <p className="inline-flex items-center gap-2 text-sm font-black text-ocean">
               <KeyRound size={15} aria-hidden="true" />
-              Senha já criada
+              Senha criada
             </p>
             <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
               A senha do certificado foi definida durante o checkout. Guarde-a: ela será pedida na emissão e não pode ser

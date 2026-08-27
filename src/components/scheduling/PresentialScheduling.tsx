@@ -9,13 +9,12 @@ import {
   presentialTimeSlots,
   servicePoints
 } from "@/data/scheduling";
-import { AlertTriangle, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { ScheduleSuccess } from "./ScheduleSuccess";
 import {
   DateSelector,
-  FileField,
   LockedField,
   OrderDataItem,
   SectionHeading,
@@ -25,23 +24,12 @@ import {
   formatSaleDate
 } from "./SchedulingFields";
 
-type AttachmentId = "identity" | "pis" | "cei" | "voter" | "cno";
-
-const attachments: Array<{ id: AttachmentId; label: string; helper: string; required?: boolean }> = [
-  { id: "identity", label: "Documento de identificação", helper: "CNH, RG, passaporte e etc.", required: true },
-  { id: "pis", label: "Comprovante PIS", helper: "Se necessário" },
-  { id: "cei", label: "Comprovante CEI/CAEPF", helper: "Se necessário" },
-  { id: "voter", label: "Comprovante título de eleitor", helper: "Se necessário" },
-  { id: "cno", label: "Comprovante CNO", helper: "Se necessário" }
-];
-
 export function PresentialScheduling({ order, now }: { order: OrderDraft; now: Date }) {
   const dates = useMemo(() => buildAvailableDates(now, { days: 20, allowSaturday: false, allowToday: false }), [now]);
 
   const [servicePointId, setServicePointId] = useState("");
   const [date, setDate] = useState(dates[0] ?? "");
   const [time, setTime] = useState("");
-  const [files, setFiles] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [confirmed, setConfirmed] = useState(false);
 
@@ -64,11 +52,6 @@ export function PresentialScheduling({ order, now }: { order: OrderDraft; now: D
     clearError("time");
   }
 
-  function changeFile(id: AttachmentId, fileName: string) {
-    setFiles(current => ({ ...current, [id]: fileName }));
-    clearError(id);
-  }
-
   function schedule() {
     const nextErrors: Record<string, string> = {};
 
@@ -78,7 +61,6 @@ export function PresentialScheduling({ order, now }: { order: OrderDraft; now: D
     else if (isSlotTaken(date, time) || isSlotInPast(date, time, now)) {
       nextErrors.time = "Este horário não está mais disponível.";
     }
-    if (!files.identity) nextErrors.identity = "Anexe o documento de identificação para continuar.";
 
     setErrors(nextErrors);
 
@@ -98,11 +80,10 @@ export function PresentialScheduling({ order, now }: { order: OrderDraft; now: D
         note="Leve os documentos originais no dia do atendimento. Chegue com 10 minutos de antecedência e apresente o número do pedido na recepção."
         onEdit={() => setConfirmed(false)}
       >
-        <div className="mt-3 rounded-2xl border border-lime-100 bg-white p-4">
-          <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">Pedido</p>
-          <p className="mt-1 text-sm font-black text-ink">
-            {order.orderNumber} · {order.productCode}
-          </p>
+        <div className="mt-3 grid gap-4 rounded-2xl border border-lime-100 bg-white p-4 sm:grid-cols-3">
+          <OrderDataItem label="Nome/Razão" value={order.holderName} />
+          <OrderDataItem label="Pedido" value={order.orderNumber} />
+          <OrderDataItem label="Tipo" value={order.productCode} />
         </div>
       </ScheduleSuccess>
     );
@@ -113,7 +94,7 @@ export function PresentialScheduling({ order, now }: { order: OrderDraft; now: D
       <SectionHeading
         eyebrow="Próximo passo"
         title="Agende seu atendimento presencial"
-        description="Escolha o posto, a data e o horário da validação de identidade. Os anexos agilizam a conferência no balcão."
+        description="Escolha o posto, a data e o horário da validação de identidade. Leve os documentos originais no dia do atendimento."
       />
 
       <div className="mt-6 rounded-3xl border border-slate-100 bg-slate-50/70 p-4 sm:p-5">
@@ -178,30 +159,6 @@ export function PresentialScheduling({ order, now }: { order: OrderDraft; now: D
             }}
             error={errors.time}
           />
-        </div>
-      </div>
-
-      <div className="mt-5 rounded-3xl border border-slate-100 bg-slate-50/70 p-4 sm:p-5">
-        <p className="text-sm font-black text-ink">
-          <span className="text-trust">*</span> Anexe os arquivos, cada um referente ao campo determinado
-        </p>
-        <p className="mt-2 inline-flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-[13px] font-bold leading-5 text-amber-800">
-          <AlertTriangle size={15} className="mt-0.5 shrink-0" aria-hidden="true" />
-          Anexar os documentos não isenta a apresentação dos originais no momento do atendimento.
-        </p>
-
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {attachments.map(attachment => (
-            <FileField
-              key={attachment.id}
-              label={attachment.label}
-              helper={attachment.helper}
-              required={attachment.required}
-              value={files[attachment.id] ?? ""}
-              error={errors[attachment.id]}
-              onChange={fileName => changeFile(attachment.id, fileName)}
-            />
-          ))}
         </div>
       </div>
 
