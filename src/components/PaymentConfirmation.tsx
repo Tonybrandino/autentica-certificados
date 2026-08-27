@@ -191,7 +191,7 @@ export function PaymentConfirmation() {
   const productCode = `${selectedCertificate.code} ${selectedDevice.productType}`;
   const productName = selectedProduct?.name ?? "Certificado Digital";
   const seed = `${certificate}-${device}-${validation}-${activeValidity}-${payment}`;
-  const { order, hasDraft } = useOrderDraft({ validation, productName, productCode, seed });
+  const { order } = useOrderDraft({ validation, productName, productCode, seed });
 
   return (
     <section className="relative bg-[linear-gradient(180deg,#f9fdf5_0%,#eef8e8_48%,#ffffff_100%)] pt-28 pb-16 sm:pb-20">
@@ -222,9 +222,10 @@ export function PaymentConfirmation() {
                 <div className="rounded-3xl border border-lime-100 bg-white/85 p-4 shadow-sm lg:w-80">
                   <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Resumo</p>
                   <h2 className="mt-2 text-xl font-black text-ink">{productName}</h2>
-                  {hasDraft && (
-                    <p className="mt-1 text-sm font-bold leading-5 text-slate-600">{order.holderName}</p>
-                  )}
+                  <p className="mt-3 text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">
+                    {certificate === "pf" ? "Nome do cliente" : "Nome/Razão"}
+                  </p>
+                  <p className="mt-0.5 text-sm font-black leading-5 text-slate-700">{order.holderName}</p>
                   <div className="mt-4 space-y-2">
                     <SummaryRow label="Certificado" value={selectedCertificate.label} />
                     <SummaryRow label="Dispositivo" value={selectedDevice.label} />
